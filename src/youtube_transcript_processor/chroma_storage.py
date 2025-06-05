@@ -1,0 +1,457 @@
+"""ChromaDB storage utility for YouTube transcript chunks."""
+
+import os
+import json
+import logging
+from pathlib import Path
+from typing import Dict, List, Optional, Any, Union
+import chromadb
+from chromadb.config import Settings
+from chromadb.api.models.Collection import Collection
+from datetime import datetime
+from tabulate import tabulate  # For pretty printing tables
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+    handlers=[
+        logging.FileHandler('chroma_storage.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+class ChromaStorage:
+    """Handles storage and retrieval of transcript chunks in ChromaDB."""
+    
+    def __init__(
+        self,
+        persist_directory: str = "chroma_db",
+        collection_name: str = "youtube_transcripts_v1",
+        collection_metadata: Optional[Dict[str, Any]] = None
+    ):
+        """Initialize ChromaDB storage.
+        
+        Args:
+            persist_directory: Directory to persist ChromaDB data
+            collection_name: Name of the collection to use
+            collection_metadata: Optional metadata for the collection
+        """
+        self.persist_directory = persist_directory
+        self.collection_name = collection_name
+        self.collection_metadata = collection_metadata or {
+            "hnsw:space": "cosine",
+            "description": "YouTube transcript chunks"
+        }
+        
+        # Initialize ChromaDB client with settings
+        logger.info(f"Initializing ChromaDB client with persist directory: {persist_directory}")
+        self.client = chromadb.PersistentClient(
+            path=persist_directory,
+            settings=Settings(
+                anonymized_telemetry=False,
+                allow_reset=True
+            )
+        )
+        
+        # Get or create collection
+        self.collection = self._get_or_create_collection()
+        
+    def _get_or_create_collection(self) -> Collection:
+        """Get existing collection or create new one."""
+        try:
+            # First try to get the collection
+            try:
+                collection = self.client.get_collection(
+                    name=self.collection_name
+                )
+                logger.info(f"Retrieved existing collection '{self.collection_name}'")
+                return collection
+            except ValueError:
+                # Collection doesn't exist, create it
+                collection = self.client.create_collection(
+                    name=self.collection_name,
+                    metadata=self.collection_metadata
+                )
+                logger.info(f"Created new collection '{self.collection_name}'")
+                return collection
+        except Exception as e:
+            logger.error(f"Failed to get/create collection: {e}")
+            raise
+
+    def store_processed_file(self, file_path: Path) -> Dict[str, int]:
+        """Store chunks from a processed JSON file into ChromaDB.
+        
+        Args:
+            file_path: Path to the processed JSON file
+            
+        Returns:
+            Dict with counts of added and skipped items
+        """
+        logger.info(f"Processing file: {file_path}")
+        
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to read file {file_path}: {e}")
+            return {"added": 0, "skipped": 0, "errors": 1}
+            
+        # Get existing IDs to avoid duplicates
+        existing_ids = set(self.collection.get(include=[])["ids"])
+        
+        # Prepare batches for ChromaDB
+        documents_batch = []
+        embeddings_batch = []
+        metadatas_batch = []
+        ids_batch = []
+        
+        # Get metadata from the file
+        file_metadata = data.get("meta_data", {})
+        
+        # Process chunks
+        items_to_process = data.get("chunks", [])
+        if not items_to_process and isinstance(data, list):
+            items_to_process = data
+        elif not items_to_process and isinstance(data, dict) and all(k in data for k in ["id", "chunk", "embeddings", "metadata"]):
+            items_to_process = [data]
+            
+        if not items_to_process:
+            logger.warning(f"No valid chunks found in {file_path}")
+            return {"added": 0, "skipped": 0, "errors": 0}
+            
+        added_count = 0
+        skipped_count = 0
+        error_count = 0
+        
+        for item in items_to_process:
+            try:
+                chunk_id = item.get("id")
+                chunk_text = item.get("chunk")
+                embedding = item.get("embeddings")
+                
+                # Create metadata combining file metadata with chunk-specific metadata
+                metadata = {
+                    "video_id": file_metadata.get("video_id", "unknown_video"),
+                    "title": file_metadata.get("title", "unknown_title"),
+                    "channel_name": file_metadata.get("channel_name", "unknown_channel"),
+                    "upload_date": file_metadata.get("upload_date", "unknown_date"),
+                    "chunk_index": item.get("chunk_index", -1)
+                }
+                
+                # Validate required fields
+                if not all([chunk_id, chunk_text, embedding]):
+                    logger.warning(f"Skipping item due to missing required fields in {file_path}")
+                    error_count += 1
+                    continue
+                    
+                # Skip if already exists
+                if chunk_id in existing_ids:
+                    logger.debug(f"Chunk {chunk_id} already exists, skipping")
+                    skipped_count += 1
+                    continue
+                    
+                # Add to batches
+                documents_batch.append(chunk_text)
+                embeddings_batch.append(embedding)
+                metadatas_batch.append(metadata)
+                ids_batch.append(chunk_id)
+                existing_ids.add(chunk_id)
+                
+            except Exception as e:
+                logger.error(f"Error processing chunk in {file_path}: {e}")
+                error_count += 1
+                continue
+                
+        # Add batches to ChromaDB if any
+        if documents_batch:
+            try:
+                self.collection.add(
+                    ids=ids_batch,
+                    embeddings=embeddings_batch,
+                    documents=documents_batch,
+                    metadatas=metadatas_batch
+                )
+                added_count = len(ids_batch)
+                logger.info(f"Added {added_count} new chunks from {file_path}")
+            except Exception as e:
+                logger.error(f"Failed to add chunks to ChromaDB: {e}")
+                error_count += len(ids_batch)
+                added_count = 0
+                
+        return {
+            "added": added_count,
+            "skipped": skipped_count,
+            "errors": error_count
+        }
+        
+    def _ensure_metadata_fields(self, metadata: Dict[str, Any]) -> Dict[str, Any]:
+        """Ensure metadata has all required fields with defaults if missing."""
+        required_fields = {
+            "video_id": "unknown_video",
+            "title": "unknown_title",
+            "channel_name": "unknown_channel",
+            "upload_date": "unknown_date",
+            "chunk_index": -1
+        }
+        
+        for field, default in required_fields.items():
+            if field not in metadata:
+                metadata[field] = default
+                
+        return metadata
+        
+    def store_directory(self, directory_path: Path) -> Dict[str, int]:
+        """Store all processed JSON files from a directory.
+        
+        Args:
+            directory_path: Path to directory containing processed JSON files
+            
+        Returns:
+            Dict with total counts of added, skipped, and error items
+        """
+        logger.info(f"Processing directory: {directory_path}")
+        
+        total_stats = {"added": 0, "skipped": 0, "errors": 0}
+        
+        for file_path in directory_path.glob("*.json"):
+            stats = self.store_processed_file(file_path)
+            for key in total_stats:
+                total_stats[key] += stats[key]
+                
+        logger.info(f"Directory processing complete. Stats: {total_stats}")
+        return total_stats
+        
+    def get_collection_stats(self) -> Dict[str, Any]:
+        """Get statistics about the current collection."""
+        try:
+            count = self.collection.count()
+            # Get unique video IDs and channel names
+            all_metadata = self.collection.get(include=["metadatas"])["metadatas"]
+            unique_videos = len(set(m.get("video_id") for m in all_metadata))
+            unique_channels = len(set(m.get("channel_name") for m in all_metadata))
+            
+            return {
+                "collection_name": self.collection_name,
+                "total_chunks": count,
+                "unique_videos": unique_videos,
+                "unique_channels": unique_channels,
+                "persist_directory": self.persist_directory
+            }
+        except Exception as e:
+            logger.error(f"Failed to get collection stats: {e}")
+            return {
+                "collection_name": self.collection_name,
+                "error": str(e)
+            }
+
+    def list_all_documents(self, limit: int = 10, offset: int = 0) -> List[Dict[str, Any]]:
+        """List all documents in the collection with their metadata.
+        
+        Args:
+            limit: Maximum number of documents to return
+            offset: Number of documents to skip
+            
+        Returns:
+            List of dictionaries containing document data
+        """
+        try:
+            results = self.collection.get(
+                limit=limit,
+                offset=offset,
+                include=["documents", "metadatas", "embeddings"]
+            )
+            
+            documents = []
+            for i in range(len(results["ids"])):
+                doc = {
+                    "id": results["ids"][i],
+                    "text": results["documents"][i],
+                    "metadata": results["metadatas"][i],
+                    "embedding_length": len(results["embeddings"][i])
+                }
+                documents.append(doc)
+            
+            return documents
+        except Exception as e:
+            logger.error(f"Failed to list documents: {e}")
+            return []
+
+    def search_by_metadata(
+        self,
+        metadata_filter: Dict[str, Any],
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Search documents by metadata fields.
+        
+        Args:
+            metadata_filter: Dictionary of metadata fields to filter by
+            limit: Maximum number of results to return
+            
+        Returns:
+            List of matching documents with their metadata
+        """
+        try:
+            results = self.collection.get(
+                where=metadata_filter,
+                limit=limit,
+                include=["documents", "metadatas"]
+            )
+            
+            documents = []
+            for i in range(len(results["ids"])):
+                doc = {
+                    "id": results["ids"][i],
+                    "text": results["documents"][i],
+                    "metadata": results["metadatas"][i]
+                }
+                documents.append(doc)
+            
+            return documents
+        except Exception as e:
+            logger.error(f"Failed to search by metadata: {e}")
+            return []
+
+    def get_video_chunks(self, video_id: str) -> List[Dict[str, Any]]:
+        """Get all chunks for a specific video.
+        
+        Args:
+            video_id: The video ID to search for
+            
+        Returns:
+            List of chunks from the specified video
+        """
+        return self.search_by_metadata({"video_id": video_id})
+
+    def get_channel_chunks(self, channel_name: str) -> List[Dict[str, Any]]:
+        """Get all chunks from a specific channel.
+        
+        Args:
+            channel_name: The channel name to search for
+            
+        Returns:
+            List of chunks from the specified channel
+        """
+        return self.search_by_metadata({"channel_name": channel_name})
+
+    def print_collection_summary(self):
+        """Print a summary of the collection contents."""
+        stats = self.get_collection_stats()
+        print("\n=== Collection Summary ===")
+        print(json.dumps(stats, indent=2))
+        
+        # Get sample of documents
+        print("\n=== Sample Documents ===")
+        docs = self.list_all_documents(limit=5)
+        if docs:
+            table_data = []
+            for doc in docs:
+                table_data.append([
+                    doc["id"],
+                    doc["metadata"]["video_id"],
+                    doc["metadata"]["channel_name"],
+                    doc["metadata"]["upload_date"],
+                    len(doc["text"])
+                ])
+            
+            print(tabulate(
+                table_data,
+                headers=["ID", "Video ID", "Channel", "Date", "Text Length"],
+                tablefmt="grid"
+            ))
+        else:
+            print("No documents found in collection.")
+
+    def print_video_summary(self, video_id: str):
+        """Print a summary of chunks for a specific video.
+        
+        Args:
+            video_id: The video ID to summarize
+        """
+        chunks = self.get_video_chunks(video_id)
+        if not chunks:
+            print(f"No chunks found for video {video_id}")
+            return
+            
+        print(f"\n=== Video Summary: {video_id} ===")
+        print(f"Total chunks: {len(chunks)}")
+        
+        # Get metadata from first chunk
+        metadata = chunks[0]["metadata"]
+        print(f"Title: {metadata.get('title', 'N/A')}")
+        print(f"Channel: {metadata.get('channel_name', 'N/A')}")
+        print(f"Upload Date: {metadata.get('upload_date', 'N/A')}")
+        
+        print("\n=== Chunks ===")
+        for i, chunk in enumerate(chunks, 1):
+            print(f"\nChunk {i}:")
+            print(f"ID: {chunk['id']}")
+            print(f"Text: {chunk['text'][:200]}...")  # Print first 200 chars
+
+    def clear_collection(self) -> bool:
+        """Clear all data from the collection."""
+        try:
+            # Get all document IDs
+            all_ids = self.collection.get(include=[])["ids"]
+            if all_ids:
+                # Delete all documents by their IDs
+                self.collection.delete(ids=all_ids)
+            logger.info(f"Cleared collection '{self.collection_name}'")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to clear collection: {e}")
+            return False
+
+def main():
+    """Example usage of ChromaStorage."""
+    # Initialize storage
+    storage = ChromaStorage(
+        persist_directory="chroma_db",
+        collection_name="youtube_transcripts_v1"
+    )
+    
+    # Load data from the latest processed folder
+    output_dir = Path("outputs/youtube")
+    if output_dir.exists():
+        # Get the latest folder
+        latest_folder = max((d for d in output_dir.iterdir() if d.is_dir()), key=lambda x: x.stat().st_mtime)
+        processed_folder = latest_folder / "processed"
+        print(f"\nLoading data from: {processed_folder}")
+        if processed_folder.exists():
+            # Store all JSON files from the processed folder
+            stats = storage.store_directory(processed_folder)
+            print("\nStorage Statistics:")
+            print(f"Added: {stats['added']}")
+            print(f"Skipped: {stats['skipped']}")
+            print(f"Errors: {stats['errors']}")
+        else:
+            print(f"Processed folder does not exist: {processed_folder}")
+    
+    # Print collection summary
+    print("\n=== Collection Summary ===")
+    storage.print_collection_summary()
+    
+    # Example: Print summary for a specific video (if any exists)
+    if storage.get_collection_stats()["total_chunks"] > 0:
+        # Get the first video ID from the collection
+        first_chunk = storage.list_all_documents(limit=1)[0]
+        video_id = first_chunk["metadata"]["video_id"]
+        print(f"\n=== Example Video Summary: {video_id} ===")
+        storage.print_video_summary(video_id)
+        
+        # Example: Search by metadata
+        print("\n=== Example Search Results ===")
+        # Search for chunks from the same channel
+        channel_name = first_chunk["metadata"]["channel_name"]
+        channel_chunks = storage.search_by_metadata(
+            {"channel_name": channel_name},
+            limit=3
+        )
+        for chunk in channel_chunks:
+            print(f"\nVideo: {chunk['metadata']['title']}")
+            print(f"Channel: {chunk['metadata']['channel_name']}")
+            print(f"Text: {chunk['text'][:200]}...")
+
+if __name__ == "__main__":
+    main() 

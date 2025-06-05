@@ -1,0 +1,67 @@
+[project]
+name = "youtube-transcript-processor"
+version = "0.1.0"
+description = "A tool for processing and analyzing YouTube transcripts with semantic search capabilities"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"}
+]
+dependencies = [
+    "chromadb>=0.4.22",
+    "sentence-transformers>=2.5.1",
+    "openai>=1.12.0",
+    "python-dotenv>=1.0.1",
+    "tabulate>=0.9.0",
+    "google-api-python-client>=2.118.0",
+    "youtube-transcript-api>=0.6.2",
+    "beautifulsoup4>=4.12.3",
+    "requests>=2.31.0",
+    "tqdm>=4.66.2",
+    "pytz>=2024.1",
+    "pyyaml>=6.0.1",
+    "torch>=2.2.1",
+    "numpy>=1.26.4",
+    "pandas>=2.2.1"
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/youtube_transcript_processor"]
+
+[project.scripts]
+youtube-fetcher = "youtube_fetcher_tool:main"
+inspect-chroma = "youtube_transcript_processor.inspect_chroma:main"
+query-handler = "youtube_transcript_processor.query_handler:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+select = ["E", "F", "B", "I", "N", "UP", "PL", "RUF"]
+ignore = ["E501"]
+
+[tool.ruff.isort]
+known-first-party = ["youtube_transcript_processor"]
+
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = ["youtube_transcript_api.*", "chromadb.*", "sentence_transformers.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --cov=youtube_transcript_processor" 

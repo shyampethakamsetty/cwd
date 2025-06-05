@@ -1,0 +1,226 @@
+# YouTube Fetcher Configuration
+
+# Time window configuration
+time_window:
+  # How many hours to look back from current time
+  hours_to_look_back: 24
+  # Optional: Specific start time in UTC (if not using hours_to_look_back)
+  # Format: "YYYY-MM-DD HH:MM:SS"
+  # start_time: "2024-03-20 00:00:00"
+  # Optional: Specific end time in UTC (if not using current time)
+  # Format: "YYYY-MM-DD HH:MM:SS"
+  # end_time: "2024-03-21 00:00:00"
+
+# Channel configuration
+channels:
+  - SPXInvesting
+  - absoluteandawesomeTrade
+  - SpicyTrade
+  - PhillipCapital
+  - ConvergentTrading
+  - FlamingosAdvisoryTube
+  - Trading180
+  - forexcom
+  - DionTrades-
+  - CoryMitchellTrading
+  - rizzotrades
+  - Mr.Nobody.ElliottWavePrinciple
+  - supernova_trades
+  - noticetrades
+  - MarkMeldrum
+  - EarningsBeats
+  - tradingSP500
+  - AdamKhoo
+  - plus3forecasting612
+more:
+  - creativeplanning
+  - LarryBermanOfficial
+  - investorsbusinessdaily
+  - TopOneTrader
+  - RTMoney
+  - JD-ES
+  - cheddarflow
+  - OpinicusTrades
+  - jimdaltontrading
+  - marketwizardStockFuturesOption
+  - PLCapital
+  - Vantagepointai
+  - ChartingProdigy
+  - askSlimTeam
+  - TraderNick
+  - OptionDrops
+  - HenryJamesCharts
+  - therealshadowtrader
+  - alphatrends
+  - geeksoffinance
+  - AreteTrading
+  - CiovaccoCapital
+  - wickedstocks8906
+  - ElliottWaveOptions
+  - getknowtrading
+  - RiskReversalMedia
+  - msforecasting
+  - COTBASE
+  - KingoftheCharts
+  - aaronrentfrew-mindunboundt2393
+  - CNBCtelevision
+  - MarketScholars
+  - Theotrade
+  - TradingFanatic
+  - SPRoadmap
+  - grayreve
+  - TradeBrigade
+  - TradingAlchemist
+  - ICTTRADER
+  - TradersHelpingTraders1
+  - prosharemarket
+  - iC4XCLEARLY
+  - slothfather5387
+  - QuarterMiLi
+  - AllStarEquityInvestments
+  - tradingsimplified8158
+  - bravosresearch
+  - JayelJL
+  - HDFCsecuritiesofficial
+  - rightsidetrader9046
+  - MoneyMakingMarket
+  - ThePortfolioBulletin
+  - Stock Markets With Bruce
+  - TheJoeHentgesBeyondtheChart
+  - optionstender8139
+  - MeetKevin
+  - ReyJayInvests
+  - DailyTradingAnalysis
+  - All Hours Trading
+  - TradingAlchemist.official
+  - marketchartpattern
+  - TradeRisk
+  - FinFluentialTV
+  - ReyJayTrades
+  - BLACKBELT_TRADING
+  - smtraderCA
+  - Value-Investing
+  - BullsOnWallStreet
+  - chrisdunntv
+  - josephhogue
+  - markets
+  - wallstreetoasis
+  - YahooFinance
+  - ZacksInvestmentNews
+  - HighAltitudeInvesting
+  - InstituteofTrading
+  - Benzinga
+  - principlesbyraydalio
+  - AlesWorldofStocks
+  - StockMoe
+  - TickerSymbolYOU
+  - FREENVESTING
+  - SimplerTrading
+  - TheStreet
+  - SeekingAlpha
+  - FoxBusiness
+  - FinancialTimes
+  - macrovoices7508
+  - DividendGuy
+  - ChartGuys
+  - SPYDayTrading
+  - thetradingchannel
+  - TheTradingPitOfficial
+  - tradewithprofile
+  - TheEngineer_IAO
+  - RyanScribner
+  - SchwabNetwork
+  - kitco
+  - Themarketchronicles
+  - Tim_gaylor
+  - SmashingGoals
+  - danieloakleyy
+  - StockChartsTV
+  - FinancialMood
+  - JeffTeeples
+  - CommSecTV
+  - kennethsuna
+  - ExtrinsicTrades
+  - Finding_Finance
+  - TechConversations
+  - Epitometrading
+  - DividendDiplomats
+  - charliemoney7826
+  - GarethSolowayProTrader
+  - TheFinanceHydra
+  - ThePriceActionTraders
+  - themikejonesinvesting
+  - getmetrading
+  - InvestWithJacob
+  - Dr.Stock.
+  - FelixFriends
+  - cityindex
+  - technical_analysiss
+  - GammaEdge
+  - carnivoretrades
+  - dynamictrendinc
+  - 0dteTraders
+  - SpyGlassFlow
+  - TradingLitt
+  - menthorq
+  - spyderqueentrading
+  - ChrisPulverTrading
+  - stockxcapital
+  - FiguringOutMoney
+  - TradersPost
+  - WealthBuildersHQ
+  - FocusedTrades
+  - CaptainJimJames
+  - Matt_Kohrs
+  - TopstepOfficial
+  - VectorVestinc
+  - dailystockpick
+  - EKNETWORK1
+  - cfromhertz33
+  - thejokertrades
+  - juniortrader
+  - optionpit2333
+  - Fidelity
+  - Lionofwallstreet1
+  - DividendBull
+  - gameoftrades
+  - StasTalksStocks
+  - tastylive
+  - breakpointtrades
+  - NASDAQ_NINJA
+  - EverythingMoney
+  - CharlesSchwab
+  - RickyGutierrezz
+  - WhiteBoardFinance
+  - DaytradeWarrior
+  - TraderTVLive
+  - TheOptionsInsider
+  - DayTraderSP500
+  - Maxim.Sherstobitov
+  - BeginnerTrading
+  - thewallstreetschool
+  - VolatilityTradingStrategies
+  - Global-bdtradingPlan
+  - Simplywallst
+  - tradeswithjess
+  - ironbeamfutures
+  - wsj
+  - bluelinefutures
+  - Irontrader.Wallstreet
+  - leelowell
+  - FatCatsOfWallStreet
+  - allhourstrading3722
+  - mavericktrading
+
+# Fetcher settings
+fetcher_settings:
+  max_urls_per_channel: 50
+  request_delay: 1.0  # seconds
+  max_retries: 3
+  timeout: 30  # seconds
+  output_dir: "OUTPUTS"
+
+# API settings
+api_settings:
+  quota_limit: 10000  # Daily quota limit
+  quota_reset_time: "00:00:00"  # UTC time when quota resets 
