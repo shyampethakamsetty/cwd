@@ -1,0 +1,552 @@
+{
+    "pipeline_execution_time_seconds": 116.71,
+    "total_transcripts_found": 68,
+    "total_transcripts_processed_successfully": 67,
+    "total_transcripts_failed": 1,
+    "api_calls_made": 67,
+    "total_prompt_tokens": 302636,
+    "total_completion_tokens": 43391,
+    "total_tokens_processed": 346027,
+    "individual_transcript_stats": [
+        {
+            "video_id": "61YOAr9e6UY",
+            "status": "success",
+            "prompt_tokens": 300,
+            "completion_tokens": 335,
+            "total_tokens": 635,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "4YAcbceE1E8",
+            "status": "success",
+            "prompt_tokens": 505,
+            "completion_tokens": 358,
+            "total_tokens": 863,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "0wX5NEMNIjA",
+            "status": "success",
+            "prompt_tokens": 361,
+            "completion_tokens": 372,
+            "total_tokens": 733,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "4Ho1OEb3D2A",
+            "status": "success",
+            "prompt_tokens": 1771,
+            "completion_tokens": 626,
+            "total_tokens": 2397,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "-Av-oNp2PNQ",
+            "status": "success",
+            "prompt_tokens": 1919,
+            "completion_tokens": 735,
+            "total_tokens": 2654,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "-HRRV7rm1hA",
+            "status": "success",
+            "prompt_tokens": 2870,
+            "completion_tokens": 639,
+            "total_tokens": 3509,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "21H0JXKv7Do",
+            "status": "success",
+            "prompt_tokens": 1926,
+            "completion_tokens": 857,
+            "total_tokens": 2783,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "6UHTZXh-qaE",
+            "status": "success",
+            "prompt_tokens": 1290,
+            "completion_tokens": 451,
+            "total_tokens": 1741,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "2Ln97WQiuBk",
+            "status": "success",
+            "prompt_tokens": 4531,
+            "completion_tokens": 955,
+            "total_tokens": 5486,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "3Iydw7P00hY",
+            "status": "success",
+            "prompt_tokens": 1720,
+            "completion_tokens": 658,
+            "total_tokens": 2378,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "8BY15oOM-Ys",
+            "status": "success",
+            "prompt_tokens": 592,
+            "completion_tokens": 669,
+            "total_tokens": 1261,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "BJOkyA76rKU",
+            "status": "success",
+            "prompt_tokens": 2669,
+            "completion_tokens": 696,
+            "total_tokens": 3365,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "2pa0trbk_no",
+            "status": "success",
+            "prompt_tokens": 6014,
+            "completion_tokens": 1145,
+            "total_tokens": 7159,
+            "chunks_created": 8
+        },
+        {
+            "video_id": "83MHkgHG064",
+            "status": "success",
+            "prompt_tokens": 1910,
+            "completion_tokens": 699,
+            "total_tokens": 2609,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "Ay7JbVzofU0",
+            "status": "success",
+            "prompt_tokens": 14307,
+            "completion_tokens": 732,
+            "total_tokens": 15039,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "BkRlzRNmheE",
+            "status": "success",
+            "prompt_tokens": 8246,
+            "completion_tokens": 790,
+            "total_tokens": 9036,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "Bnw2fjyCVjQ",
+            "status": "success",
+            "prompt_tokens": 13911,
+            "completion_tokens": 655,
+            "total_tokens": 14566,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "7zDPuNbzKnw",
+            "status": "success",
+            "prompt_tokens": 5710,
+            "completion_tokens": 987,
+            "total_tokens": 6697,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "CLYxQ3DUzWs",
+            "status": "success",
+            "prompt_tokens": 8114,
+            "completion_tokens": 715,
+            "total_tokens": 8829,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "BRiOpbB3cS0",
+            "status": "success",
+            "prompt_tokens": 1928,
+            "completion_tokens": 906,
+            "total_tokens": 2834,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "CItODIxWTaY",
+            "status": "success",
+            "prompt_tokens": 2513,
+            "completion_tokens": 690,
+            "total_tokens": 3203,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "FElInCUy-LM",
+            "status": "success",
+            "prompt_tokens": 2820,
+            "completion_tokens": 787,
+            "total_tokens": 3607,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "h8iu4QB1WCI",
+            "status": "success",
+            "prompt_tokens": 6763,
+            "completion_tokens": 693,
+            "total_tokens": 7456,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "HHoH2RnFqi4",
+            "status": "success",
+            "prompt_tokens": 5079,
+            "completion_tokens": 602,
+            "total_tokens": 5681,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "hJ0tGIzorWs",
+            "status": "success",
+            "prompt_tokens": 715,
+            "completion_tokens": 698,
+            "total_tokens": 1413,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "G_Dfxo2S-ak",
+            "status": "success",
+            "prompt_tokens": 1076,
+            "completion_tokens": 643,
+            "total_tokens": 1719,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "GLIRHuJicks",
+            "status": "success",
+            "prompt_tokens": 7572,
+            "completion_tokens": 801,
+            "total_tokens": 8373,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "HlzTusV1oDo",
+            "status": "success",
+            "prompt_tokens": 269,
+            "completion_tokens": 371,
+            "total_tokens": 640,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "g-tme4GtysQ",
+            "status": "success",
+            "prompt_tokens": 33139,
+            "completion_tokens": 700,
+            "total_tokens": 33839,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "L5X45lav6wo",
+            "status": "chunking_failed"
+        },
+        {
+            "video_id": "jP_HJro-BiI",
+            "status": "success",
+            "prompt_tokens": 2175,
+            "completion_tokens": 494,
+            "total_tokens": 2669,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "gzyf9TbFVnQ",
+            "status": "success",
+            "prompt_tokens": 2691,
+            "completion_tokens": 654,
+            "total_tokens": 3345,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "K5oAG64KuNQ",
+            "status": "success",
+            "prompt_tokens": 1264,
+            "completion_tokens": 538,
+            "total_tokens": 1802,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "khUe3UTVa6o",
+            "status": "success",
+            "prompt_tokens": 2380,
+            "completion_tokens": 577,
+            "total_tokens": 2957,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "j_SNhv-rxkg",
+            "status": "success",
+            "prompt_tokens": 1918,
+            "completion_tokens": 786,
+            "total_tokens": 2704,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "MvoJ1WRN8uo",
+            "status": "success",
+            "prompt_tokens": 365,
+            "completion_tokens": 311,
+            "total_tokens": 676,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "kBW6_US0YYc",
+            "status": "success",
+            "prompt_tokens": 9825,
+            "completion_tokens": 697,
+            "total_tokens": 10522,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "I0jnyaVduPc",
+            "status": "success",
+            "prompt_tokens": 19203,
+            "completion_tokens": 912,
+            "total_tokens": 20115,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "m82VUfuKSTg",
+            "status": "success",
+            "prompt_tokens": 2418,
+            "completion_tokens": 676,
+            "total_tokens": 3094,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "M-vKzlQJGxc",
+            "status": "success",
+            "prompt_tokens": 27805,
+            "completion_tokens": 668,
+            "total_tokens": 28473,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "kR58eM-6_Yc",
+            "status": "success",
+            "prompt_tokens": 2533,
+            "completion_tokens": 789,
+            "total_tokens": 3322,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "lj7M9Z29CJs",
+            "status": "success",
+            "prompt_tokens": 3040,
+            "completion_tokens": 839,
+            "total_tokens": 3879,
+            "chunks_created": 7
+        },
+        {
+            "video_id": "Mtr7a7fkSS8",
+            "status": "success",
+            "prompt_tokens": 4505,
+            "completion_tokens": 789,
+            "total_tokens": 5294,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "NsMO7sID0ys",
+            "status": "success",
+            "prompt_tokens": 1997,
+            "completion_tokens": 452,
+            "total_tokens": 2449,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "tJvAIeMtAs8",
+            "status": "success",
+            "prompt_tokens": 423,
+            "completion_tokens": 232,
+            "total_tokens": 655,
+            "chunks_created": 2
+        },
+        {
+            "video_id": "s3r4ZsCKOWY",
+            "status": "success",
+            "prompt_tokens": 888,
+            "completion_tokens": 366,
+            "total_tokens": 1254,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "P9qpuKIEeus",
+            "status": "success",
+            "prompt_tokens": 1314,
+            "completion_tokens": 532,
+            "total_tokens": 1846,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "UGdjMwGEvKQ",
+            "status": "success",
+            "prompt_tokens": 1146,
+            "completion_tokens": 362,
+            "total_tokens": 1508,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "qiIVMw_UktU",
+            "status": "success",
+            "prompt_tokens": 3855,
+            "completion_tokens": 654,
+            "total_tokens": 4509,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "Rn9nVmE_IhI",
+            "status": "success",
+            "prompt_tokens": 770,
+            "completion_tokens": 560,
+            "total_tokens": 1330,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "RiDEIhZErgU",
+            "status": "success",
+            "prompt_tokens": 10487,
+            "completion_tokens": 716,
+            "total_tokens": 11203,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "RJ31FlIEk-E",
+            "status": "success",
+            "prompt_tokens": 1792,
+            "completion_tokens": 718,
+            "total_tokens": 2510,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "wdAXglInx-8",
+            "status": "success",
+            "prompt_tokens": 767,
+            "completion_tokens": 368,
+            "total_tokens": 1135,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "QeLIctJk1Po",
+            "status": "success",
+            "prompt_tokens": 4342,
+            "completion_tokens": 1032,
+            "total_tokens": 5374,
+            "chunks_created": 9
+        },
+        {
+            "video_id": "X1KAifJ4JIg",
+            "status": "success",
+            "prompt_tokens": 649,
+            "completion_tokens": 385,
+            "total_tokens": 1034,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "Vo8R_LubnvY",
+            "status": "success",
+            "prompt_tokens": 705,
+            "completion_tokens": 389,
+            "total_tokens": 1094,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "zcNzTXJAlDA",
+            "status": "success",
+            "prompt_tokens": 1132,
+            "completion_tokens": 485,
+            "total_tokens": 1617,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "zhifAqN7n1w",
+            "status": "success",
+            "prompt_tokens": 534,
+            "completion_tokens": 242,
+            "total_tokens": 776,
+            "chunks_created": 2
+        },
+        {
+            "video_id": "wIgutTHdImo",
+            "status": "success",
+            "prompt_tokens": 4054,
+            "completion_tokens": 911,
+            "total_tokens": 4965,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "xUBvytkiuR4",
+            "status": "success",
+            "prompt_tokens": 15352,
+            "completion_tokens": 796,
+            "total_tokens": 16148,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "SjSDWIa4SHk",
+            "status": "success",
+            "prompt_tokens": 1510,
+            "completion_tokens": 751,
+            "total_tokens": 2261,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "YeJDRUY39ts",
+            "status": "success",
+            "prompt_tokens": 6167,
+            "completion_tokens": 698,
+            "total_tokens": 6865,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "ZyITGleCg1k",
+            "status": "success",
+            "prompt_tokens": 814,
+            "completion_tokens": 393,
+            "total_tokens": 1207,
+            "chunks_created": 3
+        },
+        {
+            "video_id": "_1XBCYhvbcA",
+            "status": "success",
+            "prompt_tokens": 1160,
+            "completion_tokens": 534,
+            "total_tokens": 1694,
+            "chunks_created": 4
+        },
+        {
+            "video_id": "ZxwMNGnkQO0",
+            "status": "success",
+            "prompt_tokens": 4575,
+            "completion_tokens": 773,
+            "total_tokens": 5348,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "__ZdlfL75Lg",
+            "status": "success",
+            "prompt_tokens": 5369,
+            "completion_tokens": 648,
+            "total_tokens": 6017,
+            "chunks_created": 5
+        },
+        {
+            "video_id": "_i-TdgvrVK4",
+            "status": "success",
+            "prompt_tokens": 6124,
+            "completion_tokens": 790,
+            "total_tokens": 6914,
+            "chunks_created": 6
+        },
+        {
+            "video_id": "_D_wQm4nfAs",
+            "status": "success",
+            "prompt_tokens": 6048,
+            "completion_tokens": 909,
+            "total_tokens": 6957,
+            "chunks_created": 7
+        }
+    ]
+}

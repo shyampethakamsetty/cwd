@@ -1,13 +1,11 @@
-"""Query handler for processing user queries against YouTube transcript chunks."""
+"""Query handler for YouTube transcript chunks in ChromaDB."""
 
 import logging
-import argparse
-from typing import List, Dict, Any, Optional
+from typing import Dict, List, Optional, Any, Union
+from datetime import datetime
 from chroma_storage import ChromaStorage
-from sentence_transformers import SentenceTransformer
-import torch
-import json
-from pathlib import Path
+from tabulate import tabulate
+from llm_client import LLMClient
 
 # Configure logging
 logging.basicConfig(
@@ -21,271 +19,283 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class QueryHandler:
-    """Handles query processing and response generation."""
+    """Handles semantic search queries with metadata filtering."""
     
     def __init__(
         self,
-        chroma_storage: ChromaStorage,
-        embedding_model_name: str = "all-MiniLM-L6-v2",
-        top_k: int = 5
+        persist_directory: str = "chroma_db",
+        collection_name: str = "youtube_transcripts"
     ):
         """Initialize the query handler.
         
         Args:
-            chroma_storage: Initialized ChromaStorage instance
-            embedding_model_name: Name of the sentence transformer model to use
-            top_k: Number of top chunks to retrieve
+            persist_directory: Directory where ChromaDB data is persisted
+            collection_name: Name of the ChromaDB collection
         """
-        self.chroma_storage = chroma_storage
-        self.embedding_model = SentenceTransformer(embedding_model_name)
-        self.top_k = top_k
-        
-    def _embed_query(self, query: str) -> List[float]:
-        """Embed the query using the sentence transformer model."""
-        with torch.no_grad():
-            embedding = self.embedding_model.encode(query)
-        return embedding.tolist()
+        self.storage = ChromaStorage(
+            persist_directory=persist_directory,
+            collection_name=collection_name
+        )
+        self.llm_client = LLMClient()
         
     def _format_chunks_for_llm(self, chunks: List[Dict[str, Any]]) -> str:
         """Format retrieved chunks into a prompt for the LLM."""
         formatted_chunks = []
         for chunk in chunks:
-            metadata = chunk.get("metadata", {})
+            metadata = chunk["metadata"]
             formatted_chunk = (
-                f"Video: {metadata.get('title', 'Unknown')}\n"
-                f"Channel: {metadata.get('channel_name', 'Unknown')}\n"
-                f"Date: {metadata.get('upload_date', 'Unknown')}\n"
-                f"Content: {chunk.get('document', '')}\n"
+                f"Source: {metadata['video_title']} (by {metadata['channel_name']})\n"
+                f"Published: {metadata['published_at']}\n"
+                f"Content: {chunk['text']}\n"
                 f"---\n"
             )
             formatted_chunks.append(formatted_chunk)
-            
         return "\n".join(formatted_chunks)
-        
-    def process_query(
+
+    def semantic_search(
         self,
         query: str,
-        llm_client: Any,  # Type hint for your preferred LLM client
-        system_prompt: Optional[str] = None,
-        debug: bool = False
-    ) -> str:
-        """Process a user query and generate a response.
+        channel_id: Optional[str] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        limit: int = 5,
+        debug: bool = False,
+        generate_response: bool = True
+    ) -> Dict[str, Any]:
+        """Perform semantic search with metadata filtering.
         
         Args:
-            query: User's query string
-            llm_client: Initialized LLM client instance
-            system_prompt: Optional system prompt for the LLM
-            debug: Whether to print retrieved chunks for debugging
+            query: The search query text
+            channel_id: Optional channel ID to filter by
+            start_date: Optional start date (Unix timestamp)
+            end_date: Optional end date (Unix timestamp)
+            limit: Maximum number of results to return
+            debug: Whether to print detailed debug information
+            generate_response: Whether to generate an LLM response
             
         Returns:
-            Generated response string
+            Dictionary containing search results and optional LLM response
         """
         try:
-            # Embed the query
-            query_embedding = self._embed_query(query)
+            # Build where clause for metadata filtering
+            where = {}
+            if channel_id:
+                where["channel_id"] = channel_id
+                
+            if start_date or end_date:
+                where["published_at"] = {}
+                if start_date:
+                    where["published_at"]["$gte"] = start_date
+                if end_date:
+                    where["published_at"]["$lte"] = end_date
             
-            # Search ChromaDB for relevant chunks
-            results = self.chroma_storage.collection.query(
-                query_embeddings=[query_embedding],
-                n_results=self.top_k
+            if debug:
+                print("\n=== Search Parameters ===")
+                print(f"Query: {query}")
+                print(f"Filters: {where if where else 'None'}")
+                print(f"Limit: {limit}")
+            
+            # Perform the query
+            results = self.storage.collection.query(
+                query_texts=[query],
+                n_results=limit,
+                where=where if where else None
             )
             
-            # Format chunks for LLM
-            formatted_chunks = self._format_chunks_for_llm([
-                {
-                    "document": doc,
-                    "metadata": meta
-                }
-                for doc, meta in zip(results["documents"][0], results["metadatas"][0])
-            ])
+            # Format results
+            formatted_results = []
+            for i in range(len(results["ids"][0])):
+                metadata = results["metadatas"][0][i]
+                # Convert Unix timestamp to readable date
+                published_at = metadata.get("published_at", "unknown")
+                if published_at != "unknown":
+                    try:
+                        published_at = datetime.fromtimestamp(int(published_at)).strftime('%Y-%m-%d %H:%M:%S')
+                    except (ValueError, TypeError):
+                        pass
+                
+                formatted_results.append({
+                    "id": results["ids"][0][i],
+                    "text": results["documents"][0][i],
+                    "metadata": {
+                        "video_id": metadata.get("video_id", "unknown"),
+                        "channel_id": metadata.get("channel_id", "unknown"),
+                        "channel_name": metadata.get("channel_name", "unknown"),
+                        "video_title": metadata.get("video_title", "unknown"),
+                        "published_at": published_at,
+                        "chunk_index": metadata.get("chunk_index", -1)
+                    },
+                    "similarity": results["distances"][0][i] if "distances" in results else None
+                })
             
-            # Debug output if requested
             if debug:
-                print("\nRetrieved chunks:")
-                print(formatted_chunks)
+                print("\n=== Retrieved Chunks ===")
+                table_data = []
+                for result in formatted_results:
+                    table_data.append([
+                        result["id"],
+                        result["metadata"]["video_title"],
+                        result["metadata"]["channel_name"],
+                        result["metadata"]["published_at"],
+                        result["metadata"]["chunk_index"],
+                        f"{result['similarity']:.4f}" if result['similarity'] is not None else "N/A",
+                        len(result["text"])
+                    ])
+                
+                print(tabulate(
+                    table_data,
+                    headers=["ID", "Video Title", "Channel", "Published", "Chunk Index", "Similarity", "Text Length"],
+                    tablefmt="grid"
+                ))
+                
+                print("\n=== Full Text of Retrieved Chunks ===")
+                for i, result in enumerate(formatted_results, 1):
+                    print(f"\nChunk {i}:")
+                    print(f"ID: {result['id']}")
+                    print(f"Video: {result['metadata']['video_title']}")
+                    print(f"Channel: {result['metadata']['channel_name']}")
+                    print(f"Published: {result['metadata']['published_at']}")
+                    print(f"Chunk Index: {result['metadata']['chunk_index']}")
+                    print(f"Similarity: {result['similarity']:.4f}" if result['similarity'] is not None else "N/A")
+                    print(f"Text:\n{result['text']}\n")
+                    print("-" * 80)
             
-            # Prepare the prompt
-            if system_prompt is None:
+            response = None
+            if generate_response and formatted_results:
+                # Format chunks for LLM
+                formatted_chunks = self._format_chunks_for_llm(formatted_results)
+                
+                # Generate response using LLM
                 system_prompt = (
-                    "You are a friendly and knowledgeable financial analysis assistant. Your role is to provide "
+                    "You are a knowledgeable financial analysis assistant. Your role is to provide "
                     "clear, concise, and focused answers based on the information available in the video transcripts. "
                     "Follow these guidelines:\n"
                     "1. Focus ONLY on the specific question asked\n"
-                    "2. If the question is about specific stocks (like AAPL or TSLA), only include information about those stocks\n"
-                    "3. Keep responses concise and to the point\n"
-                    "4. Use a conversational tone\n"
-                    "5. If you don't have enough information about the specific topic, simply say 'I don't have enough information about that specific topic in my current knowledge base. Would you like to ask about something else?'\n"
-                    "6. Never mention 'chunks' or technical details about how you process information\n"
-                    "7. Never say 'no specific analysis was found' or similar phrases\n"
-                    "8. If you have partial information, focus on what you do know rather than what you don't"
+                    "2. Keep responses concise and to the point\n"
+                    "3. Use a conversational tone\n"
+                    "4. If you don't have enough information, say so\n"
+                    "5. Never mention 'chunks' or technical details about how you process information\n"
+                    "6. If you have partial information, focus on what you do know rather than what you don't"
+                )
+                
+                response = self.llm_client.generate(
+                    system_prompt=system_prompt,
+                    user_prompt=f"Question: {query}\n\nRelevant information:\n{formatted_chunks}"
                 )
             
-            # Generate response using LLM
-            response = llm_client.generate(
-                system_prompt=system_prompt,
-                user_prompt=f"Question: {query}\n\nRelevant chunks:\n{formatted_chunks}"
-            )
-            
-            # If no relevant information was found, provide a more conversational response
-            if "cannot find relevant information" in response.lower() or "no specific analysis" in response.lower():
-                return "I don't have enough information about that specific topic in my current knowledge base. Would you like to ask about something else?"
-            
-            return response
+            return {
+                "results": formatted_results,
+                "response": response
+            }
             
         except Exception as e:
-            logger.error(f"Error processing query: {e}")
-            return "I apologize, but I encountered an error while processing your question. Could you please try rephrasing it?"
-
-def list_available_tags():
-    """List all available tags in the ChromaDB collection."""
-    try:
-        # Initialize ChromaStorage
-        storage = ChromaStorage()
-        
-        # Get all unique tags
-        all_metadata = storage.collection.get()["metadatas"]
-        tags = set()
-        for metadata in all_metadata:
-            if "tags" in metadata:
-                tags.update(metadata["tags"])
-        
-        print("\nAvailable tags:")
-        for tag in sorted(tags):
-            print(f"- {tag}")
+            logger.error(f"Error performing semantic search: {e}")
+            return {"results": [], "response": None}
             
-    except Exception as e:
-        logger.error(f"Error listing tags: {e}")
-        print(f"Error listing tags: {str(e)}")
-
-def search_by_tags(tags: List[str], output_file: Optional[str] = None):
-    """Search for videos by tags and optionally save results to a file."""
-    try:
-        # Initialize ChromaStorage
-        storage = ChromaStorage()
+    def search_by_channel(
+        self,
+        channel_id: str,
+        query: Optional[str] = None,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        limit: int = 5,
+        debug: bool = False
+    ) -> List[Dict[str, Any]]:
+        """Search for content from a specific channel.
         
-        # Get all documents and metadata
-        results = storage.collection.get()
-        
-        # Filter by tags
-        matching_videos = []
-        for doc, metadata in zip(results["documents"], results["metadatas"]):
-            if "tags" in metadata and all(tag in metadata["tags"] for tag in tags):
-                matching_videos.append({
-                    "title": metadata.get("title", "Unknown"),
-                    "channel": metadata.get("channel_name", "Unknown"),
-                    "date": metadata.get("upload_date", "Unknown"),
-                    "content": doc
-                })
-        
-        # Print or save results
-        if output_file:
-            with open(output_file, 'w', encoding='utf-8') as f:
-                json.dump(matching_videos, f, indent=2, ensure_ascii=False)
-            print(f"\nResults saved to {output_file}")
-        else:
-            print(f"\nFound {len(matching_videos)} videos matching tags: {', '.join(tags)}")
-            for video in matching_videos:
-                print(f"\nTitle: {video['title']}")
-                print(f"Channel: {video['channel']}")
-                print(f"Date: {video['date']}")
-                print("-" * 50)
+        Args:
+            channel_id: Channel ID to search in
+            query: Optional semantic search query
+            start_date: Optional start date (Unix timestamp)
+            end_date: Optional end date (Unix timestamp)
+            limit: Maximum number of results to return
+            debug: Whether to print detailed debug information
             
-    except Exception as e:
-        logger.error(f"Error searching by tags: {e}")
-        print(f"Error searching by tags: {str(e)}")
+        Returns:
+            List of matching documents
+        """
+        return self.semantic_search(
+            query=query if query else "",
+            channel_id=channel_id,
+            start_date=start_date,
+            end_date=end_date,
+            limit=limit,
+            debug=debug
+        )
+        
+    def search_by_date_range(
+        self,
+        start_date: str,
+        end_date: str,
+        query: Optional[str] = None,
+        channel_id: Optional[str] = None,
+        limit: int = 5,
+        debug: bool = False
+    ) -> List[Dict[str, Any]]:
+        """Search for content within a date range.
+        
+        Args:
+            start_date: Start date (Unix timestamp)
+            end_date: End date (Unix timestamp)
+            query: Optional semantic search query
+            channel_id: Optional channel ID to filter by
+            limit: Maximum number of results to return
+            debug: Whether to print detailed debug information
+            
+        Returns:
+            List of matching documents
+        """
+        return self.semantic_search(
+            query=query if query else "",
+            channel_id=channel_id,
+            start_date=start_date,
+            end_date=end_date,
+            limit=limit,
+            debug=debug
+        )
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="YouTube Transcript Query Handler",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # List all available tags
-  python query_handler.py --list-tags
-
-  # Search for videos with specific tags
-  python query_handler.py --tags "technical analysis" "stock market" --output results.json
-
-  # Search for videos with specific tags and display results
-  python query_handler.py --tags "technical analysis" "stock market"
-
-  # Ask a question about the videos
-  python query_handler.py --question "What are the key technical indicators mentioned in recent videos?"
-
-  # Ask a question with specific tags
-  python query_handler.py --question "What are the key technical indicators?" --tags "technical analysis" "stock market"
-
-  # Ask a question with debug output and custom number of chunks
-  python query_handler.py --question "What are the key technical indicators?" --debug --top-k 10
-        """
-    )
+    """Example usage of the QueryHandler."""
+    import argparse
     
-    parser.add_argument(
-        "--list-tags",
-        action="store_true",
-        help="List all available tags in the database"
-    )
-    
-    parser.add_argument(
-        "--tags",
-        nargs="+",
-        help="Search for videos with specific tags"
-    )
-    
-    parser.add_argument(
-        "--output",
-        help="Save search results to a JSON file"
-    )
-
-    parser.add_argument(
-        "--question",
-        help="Ask a question about the videos"
-    )
-
-    parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Print retrieved chunks for debugging"
-    )
-
-    parser.add_argument(
-        "--top-k",
-        type=int,
-        default=5,
-        help="Number of chunks to retrieve (default: 5)"
-    )
+    parser = argparse.ArgumentParser(description='Query YouTube transcript chunks')
+    parser.add_argument('--query', type=str, help='Search query')
+    parser.add_argument('--channel', type=str, help='Channel ID to filter by')
+    parser.add_argument('--start-date', type=str, help='Start date (Unix timestamp)')
+    parser.add_argument('--end-date', type=str, help='End date (Unix timestamp)')
+    parser.add_argument('--limit', type=int, default=5, help='Maximum number of results')
+    parser.add_argument('--debug', action='store_true', help='Print detailed debug information')
+    parser.add_argument('--no-response', action='store_true', help='Skip generating LLM response')
     
     args = parser.parse_args()
     
-    if args.list_tags:
-        list_available_tags()
-    elif args.question:
-        try:
-            # Initialize ChromaStorage
-            storage = ChromaStorage()
-            
-            # Initialize QueryHandler with custom top_k
-            query_handler = QueryHandler(storage, top_k=args.top_k)
-            
-            # Initialize LLM client
-            from llm_client import LLMClient
-            llm_client = LLMClient()
-            
-            # Process the question
-            response = query_handler.process_query(
-                query=args.question,
-                llm_client=llm_client,
-                debug=args.debug
-            )
-            
-            print("\nQuestion:", args.question)
-            print("\nAnswer:", response)
-            
-        except Exception as e:
-            logger.error(f"Error processing question: {e}")
-            print(f"Error processing question: {str(e)}")
-    elif args.tags:
-        search_by_tags(args.tags, args.output)
+    handler = QueryHandler()
+    
+    if args.query:
+        result = handler.semantic_search(
+            query=args.query,
+            channel_id=args.channel,
+            start_date=args.start_date,
+            end_date=args.end_date,
+            limit=args.limit,
+            debug=args.debug,
+            generate_response=not args.no_response
+        )
+        
+        if not args.debug:  # Only print summary if not in debug mode
+            print(f"\nFound {len(result['results'])} results:")
+            for i, res in enumerate(result['results'], 1):
+                print(f"\nResult {i}:")
+                print(f"Video: {res['metadata']['video_title']}")
+                print(f"Channel: {res['metadata']['channel_name']} (ID: {res['metadata']['channel_id']})")
+                print(f"Published: {res['metadata']['published_at']}")
+                print(f"Text: {res['text'][:200]}...")
+                if res['similarity'] is not None:
+                    print(f"Similarity: {res['similarity']:.4f}")
+        
+        if result['response']:
+            print("\n=== Generated Response ===")
+            print(result['response'])
     else:
         parser.print_help()
 

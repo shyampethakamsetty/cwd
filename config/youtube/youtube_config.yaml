@@ -1,226 +1,191 @@
-# YouTube Fetcher Configuration
-
-# Time window configuration
-time_window:
-  # How many hours to look back from current time
-  hours_to_look_back: 24
-  # Optional: Specific start time in UTC (if not using hours_to_look_back)
-  # Format: "YYYY-MM-DD HH:MM:SS"
-  # start_time: "2024-03-20 00:00:00"
-  # Optional: Specific end time in UTC (if not using current time)
-  # Format: "YYYY-MM-DD HH:MM:SS"
-  # end_time: "2024-03-21 00:00:00"
-
-# Channel configuration
-channels:
-  - SPXInvesting
-  - absoluteandawesomeTrade
-  - SpicyTrade
-  - PhillipCapital
-  - ConvergentTrading
-  - FlamingosAdvisoryTube
-  - Trading180
-  - forexcom
-  - DionTrades-
-  - CoryMitchellTrading
-  - rizzotrades
-  - Mr.Nobody.ElliottWavePrinciple
-  - supernova_trades
-  - noticetrades
-  - MarkMeldrum
-  - EarningsBeats
-  - tradingSP500
-  - AdamKhoo
-  - plus3forecasting612
-more:
-  - creativeplanning
-  - LarryBermanOfficial
-  - investorsbusinessdaily
-  - TopOneTrader
-  - RTMoney
-  - JD-ES
-  - cheddarflow
-  - OpinicusTrades
-  - jimdaltontrading
-  - marketwizardStockFuturesOption
-  - PLCapital
-  - Vantagepointai
-  - ChartingProdigy
-  - askSlimTeam
-  - TraderNick
-  - OptionDrops
-  - HenryJamesCharts
-  - therealshadowtrader
-  - alphatrends
-  - geeksoffinance
-  - AreteTrading
-  - CiovaccoCapital
-  - wickedstocks8906
-  - ElliottWaveOptions
-  - getknowtrading
-  - RiskReversalMedia
-  - msforecasting
-  - COTBASE
-  - KingoftheCharts
-  - aaronrentfrew-mindunboundt2393
-  - CNBCtelevision
-  - MarketScholars
-  - Theotrade
-  - TradingFanatic
-  - SPRoadmap
-  - grayreve
-  - TradeBrigade
-  - TradingAlchemist
-  - ICTTRADER
-  - TradersHelpingTraders1
-  - prosharemarket
-  - iC4XCLEARLY
-  - slothfather5387
-  - QuarterMiLi
-  - AllStarEquityInvestments
-  - tradingsimplified8158
-  - bravosresearch
-  - JayelJL
-  - HDFCsecuritiesofficial
-  - rightsidetrader9046
-  - MoneyMakingMarket
-  - ThePortfolioBulletin
-  - Stock Markets With Bruce
-  - TheJoeHentgesBeyondtheChart
-  - optionstender8139
-  - MeetKevin
-  - ReyJayInvests
-  - DailyTradingAnalysis
-  - All Hours Trading
-  - TradingAlchemist.official
-  - marketchartpattern
-  - TradeRisk
-  - FinFluentialTV
-  - ReyJayTrades
-  - BLACKBELT_TRADING
-  - smtraderCA
-  - Value-Investing
-  - BullsOnWallStreet
-  - chrisdunntv
-  - josephhogue
-  - markets
-  - wallstreetoasis
-  - YahooFinance
-  - ZacksInvestmentNews
-  - HighAltitudeInvesting
-  - InstituteofTrading
-  - Benzinga
-  - principlesbyraydalio
-  - AlesWorldofStocks
-  - StockMoe
-  - TickerSymbolYOU
-  - FREENVESTING
-  - SimplerTrading
-  - TheStreet
-  - SeekingAlpha
-  - FoxBusiness
-  - FinancialTimes
-  - macrovoices7508
-  - DividendGuy
-  - ChartGuys
-  - SPYDayTrading
-  - thetradingchannel
-  - TheTradingPitOfficial
-  - tradewithprofile
-  - TheEngineer_IAO
-  - RyanScribner
-  - SchwabNetwork
-  - kitco
-  - Themarketchronicles
-  - Tim_gaylor
-  - SmashingGoals
-  - danieloakleyy
-  - StockChartsTV
-  - FinancialMood
-  - JeffTeeples
-  - CommSecTV
-  - kennethsuna
-  - ExtrinsicTrades
-  - Finding_Finance
-  - TechConversations
-  - Epitometrading
-  - DividendDiplomats
-  - charliemoney7826
-  - GarethSolowayProTrader
-  - TheFinanceHydra
-  - ThePriceActionTraders
-  - themikejonesinvesting
-  - getmetrading
-  - InvestWithJacob
-  - Dr.Stock.
-  - FelixFriends
-  - cityindex
-  - technical_analysiss
-  - GammaEdge
-  - carnivoretrades
-  - dynamictrendinc
-  - 0dteTraders
-  - SpyGlassFlow
-  - TradingLitt
-  - menthorq
-  - spyderqueentrading
-  - ChrisPulverTrading
-  - stockxcapital
-  - FiguringOutMoney
-  - TradersPost
-  - WealthBuildersHQ
-  - FocusedTrades
-  - CaptainJimJames
-  - Matt_Kohrs
-  - TopstepOfficial
-  - VectorVestinc
-  - dailystockpick
-  - EKNETWORK1
-  - cfromhertz33
-  - thejokertrades
-  - juniortrader
-  - optionpit2333
-  - Fidelity
-  - Lionofwallstreet1
-  - DividendBull
-  - gameoftrades
-  - StasTalksStocks
-  - tastylive
-  - breakpointtrades
-  - NASDAQ_NINJA
-  - EverythingMoney
-  - CharlesSchwab
-  - RickyGutierrezz
-  - WhiteBoardFinance
-  - DaytradeWarrior
-  - TraderTVLive
-  - TheOptionsInsider
-  - DayTraderSP500
-  - Maxim.Sherstobitov
-  - BeginnerTrading
-  - thewallstreetschool
-  - VolatilityTradingStrategies
-  - Global-bdtradingPlan
-  - Simplywallst
-  - tradeswithjess
-  - ironbeamfutures
-  - wsj
-  - bluelinefutures
-  - Irontrader.Wallstreet
-  - leelowell
-  - FatCatsOfWallStreet
-  - allhourstrading3722
-  - mavericktrading
-
-# Fetcher settings
-fetcher_settings:
-  max_urls_per_channel: 50
-  request_delay: 1.0  # seconds
-  max_retries: 3
-  timeout: 30  # seconds
-  output_dir: "OUTPUTS"
-
-# API settings
 api_settings:
-  quota_limit: 10000  # Daily quota limit
-  quota_reset_time: "00:00:00"  # UTC time when quota resets 
+  quota_limit: 10000
+  quota_reset_time: 00:00:00
+channels:
+- UC-rhL7IWb6yeErWHxDiw0lw
+- UC23xKH9twWh_lMIrkZ-Fbsw
+- UCQDycW_nZJym7D2ngoeHE4Q
+- UCsVnusn4X3w0wXzlwzVNHcQ
+- UC_uSET4grChZicwbwjs6JbA
+- UC0Sm7lWLx1DD4wNJSuLL7kg
+- UC6JLdc5KMFWRlcefg2BueKg
+- UCQH9J1ANq7Yp0lS8N0fq2UQ
+- UCLZKGgOYin_SEZrB8NkgTUg
+- UCwE55Yzg6cW6D3_En4f0bBQ
+- UCOAw8v0vkfHDdxeh8CSjmfw
+- UCi-X4is6Hrej_oqbIxZFk9Q
+- UCKjHi5brobISPYSVIDP50Dg
+- UCAHJqpJPqqLLi7siVQpD-3A
+- UCm7uW8Ekk0b-7n02F-C4ApQ
+- UCcuEQXEIeWnpYXKALf8XoHw
+- UCK-aOjEvZNJl3HINja0gAiQ
+- UCofBV-Nl0WaTs6jqTv3JQFg
+- UCRoWRnXa4ZM85Fw9EN7xICA
+- UCiAF_EAvwExXBKOKteqKcFg
+- UC5fZv7bPcF5j2RsfO-9OiLA
+- UCE0Eqmc1E5ewdVSxwhEHi3A
+- UCfwMbCgHyJ2COPIqKS5r8Ww
+- UCdch1xR8Nu_CPF-k_EvV4jQ
+- UCZwcPsE_ApWOsCUyBtUTZXw
+- UCH1Ypg31taqN9PyNkey9tzw
+- UCj7_s9HofHZL0h0tygjQqPQ
+- UC96BI3s94ucbEUwXrSW9PeA
+- UCYliB4yPBbPxOb_We4Nqi2Q
+- UC_2JxbckwMCUM9HjV09l6Gw
+- UCmlfS56nZsnX_5F1fjvX0QA
+- UCoAuxtwgh8LSHeMFqEwjgHA
+- UCPCPE5MoI7DS1WiVB_-mzNw
+- UCJ5A7RbiS35ilqUU3-ioSPw
+- UCAHJqpJPqqLLi7siVQpD-3A
+- UCV00elXN8Z0vrFIAZu3rIKw
+- UCfD3rq06LaA8wc3s2m3LwRQ
+- UCNEAKk8qPF_BHnnipA9EBQg
+- UCTeFsS-bP0XEt3NBMjfW2cA
+- UC_ywfvIR2JrnMuZt33y7QYQ
+- UCQSiWKh7o9oRtApc4YjRssg
+- UCSdmV9HW3ou301MBTSGxbjg
+- UCkO1UV76IAhnbxQTNduCg6Q
+- UCRAOycPjsSgcEyQcuJD_ENA
+- UCtehAp4VxQSHrbNvVHEZ89g
+- UCIPXgu1ZbbebeTnhfSk6QCQ
+- UC7AQQ3I02_5D6uShK96MeiA
+- UCvsyqulrvH0xeMJC1HUxMxg
+- UCrp_UI8XtuYfpiqluWLD7Lw
+- UCM9zZ4k_w6ehs5cQGCoxVOQ
+- UCzaQpnAyt-IHT7MKgT2WhaA
+- UCamIG8Pw4LnKu7jVjMB685Q
+- UCsZp4KOJlOobrlDOaPifP_w
+- UCiFJKnWEzrvYX_KglHyQf_Q
+- UCYKtr6GfycBqQJf32tbQSbQ
+- UCa4IlK6nm1lbTgwStxCKVDQ
+- UCgulHX1_Vvl9ZtmCcULGpAA
+- UCC-1osdmqemr3ClSEJS7WCg
+- UC6DkYMEarPk9aVF__m9iXtw
+- UCZq3RHMfzPAmlRgYFXZfgnQ
+- UCwoUkOr6ZQBkisQla92Dhpw
+- UC6_5KMXnTxqYE54E2PR6GUQ
+- UCOHxDwCcOzBaLkeTazanwcw
+- UCo3HPqDrtNb1Ssgll10FVzQ
+- UCPicfXzzaSQ0S97WDSbNPcA
+- UCCN9PXNZqfNJuzr91EA3XVQ
+- UCvSkR2ipkO_UpyDdEgvCU6g
+- UC-sLd07MxbEpazsOoHJdNqA
+- UCtTn6Xa2JOsQVxOS_jI7nuQ
+- UCFvU3IoFvdWZbGP_WBqEt0A
+- UCUvvj5lwue7PspotMDjk5UA
+- UCj9dPFcre600TsmHxHC37Iw
+- UCNONtYcUp8Nl_4LQIf1Lqcg
+- UCm5cB87AGYvlm006qUFHiRw
+- UCDZkLrgzGRNhxoESf9q0uzg
+- UCgR3p6SLdiHKGBbp8dbKV6w
+- UC7QHSNOKZvbqpXWFv0SiYDQ
+- UClGy2KQicZBAcNWVk1pOKYA
+- UC2qvdO0JwOriAsimrRzGeaA
+- UCaFJSAj1qCNXFwlkM741wZg
+- UCrTTBSUr0zhPU56UQljag5A
+- UCg3Z29HusjdYQyI0_J243FQ
+- UCdC3h2m88FC02Yw-A_VESRQ
+- UCbKdotYtcY9SxoU8CYAXdvg
+- UCIALMKvObZNtJ6AmdCLP7Lg
+- UCxILKCPvwWBYauA8N3ri8Sg
+- UCEAZeUIeJs0IjQiqTCdVSIg
+- UChLnhKjHRlCl4DSncwJ1D_A
+- UCD9j5qyDqQvb9qnLss3vxww
+- UCcgaoWXUKFl-P3rdNXCuWjg
+- UCqQs28K2zj2dOsc5NfXUKEg
+- UCqvaXJ1K3HheTPNjH-KpwXQ
+- UCXhrqxFZbG-k8l7v-XhX3ZQ
+- UCoMzWLaPjDJBbipihD694pQ
+- UC7kCeZ53sli_9XwuQeFxLqw
+- UCN-qfPKTQ_Wxr8vZLVfM95w
+- UCukKZsfpQOkj3_L47VbvvSg
+- UCp6aBHRM6ZS_kLeC57HV4kg
+- UC9ZGkLwawKeG5C0Dt9FS-lQ
+- UCCXoCcu9Rp7NPbTzIvogpZg
+- UCoUxsWakJucWg46KW5RsvPw
+- UCICRehoZjq3ZtAWgRJX118A
+- UC8aD-2lWvqnkxKiGH91X1WQ
+- UCnqZ2hx679DqRi6khRUNw2g
+- UCk1rmu6QGDCGcgOqudO_i1w
+- UCGL9ubdGcvZh_dvSV2z1hoQ
+- UCXceuDbVYIYzeR4WgvUvgjg
+- UCIriFfAJfpaIQpfI-QhG_fA
+- UC3mjMoJuFnjYRBLon_6njbQ
+- UCqoSrYgusd8ZddtMoWhjHYA
+- UC9ijza42jVR3T6b8bColgvg
+- UCIIr1ooRsSukPL7rKNr0VHQ
+- UCngeUXuNMf32SZilHi5jt6w
+- UCmGmnmOtjfjwObpXCONsP6Q
+- UC-W7dUPnSvZ4oTe_8vhk-qQ
+- UCSpQMCoP0ugFyxN7Jo9e1Jw
+- UCso63eF415eCFe-ELiEhCCg
+- UC8Jc66lwfOT1CeXaEy3zEMw
+- UC_ut8WlXchkCsLTJxXdi3cw
+- UC8JDz-tjHIsMybYX8dZ8ekQ
+- UC7REFmsnHu34TNLxLCGiEcQ
+- UCZtTrFwjQoibMOdPHpQ9R9A
+- UC63_ndpOrdzca6k1FThGDqg
+- UCVu7aFNCZnLYMREs8VKoXIQ
+- UCwTu6kD2igaLMpxswtcdxlg
+- UCFnExFCkTIUsAg7HMkH2p9A
+- UCYJlnKKswcfKOVL9KYBJEHA
+- UCNeBCizpA1NbX7A9_ia6jYg
+- UC-jUmkS9ruezy_Ow-ro7EOw
+- UCJSKBsBjPH5WcqjJxYuQwYg
+- UCXfm5VqUPJjxK83m_o-EBqg
+- UCJtfma0mE_XrBAD9uakcjfA
+- UCtwdO1grQB48nZQLkWtaxWg
+- UCyfdmV924Qmpgna04011kqw
+- UC0kfBDlK6n9OZBfHOK97MbA
+- UCeUxIdShAOHU2j1VGclEtGQ
+- UCLMpjAYgxUhHNNqm1LqY94A
+- UCkUWkIgXBV81bc9cR6cZh3Q
+- UCg-NN6MbaJVh7i7erob2vHA
+- UCiGVu54iO0LYQSGUktEnQog
+- UC7fQs5Toc9ODEQG0ih54W2w
+- UC18CjH-p52Yj381ydMIJCEQ
+- UC-n5afz4JjCWCAKZDzR2szw
+- UCrMtT44vKqpZlCF7nPnJqyw
+- UCfdPOTevbfCh_QHsyPeZ8MQ
+- UCJVrkuTq5MA-sWQE81oABDQ
+- UC_F8BEA3mit9WIAZIZQ9Sow
+- UC3qyfBJkfjccNhm0v1UWU9w
+- UCOL8CVuD8Wiy8yszdY76-gA
+- UCTDYMpdFhZU6Ivf3F2AEVUQ
+- UC5unZ8UpQm2DfnJPp9tGoRw
+- UCTunv_39Cff5FIGVGI3eqbw
+- UC6orJVdhiIWisg23npXZgkA
+- UCvnM-OvQmMvJS2BnE39teZg
+- UCRsf7hPzywu85EULB6tpKlQ
+- UCLxMEPUoHpKq4PEk85RZn9A
+- UCiIarDNLrAA1xWsbHWW2ehQ
+- UCC6o7jlndjNkJRHiBtziNQQ
+- UCOXO2HDCljbvZ8nloMco-og
+- UChBVf9YnourrEDTsbbwJPRA
+- UCToe3dspZyw2L_JY-JmP3Mw
+- UCtlAFoYl2aWb6pMiHCctQHA
+- UCL_v4tC26PvOFytV1_eEVSg
+- UCBayuhgYpKNbhJxfExYkPfA
+- UCn75vF3UxwWeWPAY4-5Z6HQ
+- UCm1dAAImT6n4O1r4J4ZHstg
+- UC2upuCOuCp-f-kmlHXyY0fA
+- UCIAaNr5U1el0LScWQr8b2Yg
+- UCD-zodYZX201IkkJrOzki6Q
+- UCwEh1xKQWSsue9BQwjRJzIg
+- UCqK3bpupJgWU7nJ7NK6oXwg
+- UCtwiHWt6lhy83Rw2Qi0RWCA
+- UCXW1ftW565x-H4lrV-cRuCQ
+- UCK7tptUDHh-RYDsdxO1-5QQ
+- UCMWpkOjOFYcY2DnUyfAwbFw
+- UC_5-fOs-175Wu7R7iVIwxzQ
+- UCSDJl5c-AvvQvgsnKB4QKOA
+- UC9kVkLPTdjaj4shvCFfoA9g
+- UCu5zHoiswVlyeR3T-W6e_hA
+fetcher_settings:
+  max_retries: 3
+  max_urls_per_channel: 30
+  output_dir: OUTPUTS
+  request_delay: 1.0
+  timeout: 30
+time_window:
+  hours_to_look_back: 24

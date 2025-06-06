@@ -28,7 +28,7 @@ class ChromaStorage:
     def __init__(
         self,
         persist_directory: str = "chroma_db",
-        collection_name: str = "youtube_transcripts_v1",
+        collection_name: str = "youtube_transcripts",
         collection_metadata: Optional[Dict[str, Any]] = None
     ):
         """Initialize ChromaDB storage.
@@ -42,7 +42,7 @@ class ChromaStorage:
         self.collection_name = collection_name
         self.collection_metadata = collection_metadata or {
             "hnsw:space": "cosine",
-            "description": "YouTube transcript chunks"
+            "description": "YouTube transcript chunks with channel and date filtering"
         }
         
         # Initialize ChromaDB client with settings
@@ -131,12 +131,13 @@ class ChromaStorage:
                 chunk_text = item.get("chunk")
                 embedding = item.get("embeddings")
                 
-                # Create metadata combining file metadata with chunk-specific metadata
+                # Create metadata with new structure
                 metadata = {
-                    "video_id": file_metadata.get("video_id", "unknown_video"),
-                    "title": file_metadata.get("title", "unknown_title"),
-                    "channel_name": file_metadata.get("channel_name", "unknown_channel"),
-                    "upload_date": file_metadata.get("upload_date", "unknown_date"),
+                    "channel_id": file_metadata.get("channel_id", "unknown"),
+                    "video_id": file_metadata.get("video_id", "unknown"),
+                    "published_at": file_metadata.get("published_at", "unknown"),
+                    "channel_name": file_metadata.get("channel_name", "unknown"),
+                    "video_title": file_metadata.get("title", "unknown"),
                     "chunk_index": item.get("chunk_index", -1)
                 }
                 
@@ -283,7 +284,7 @@ class ChromaStorage:
         metadata_filter: Dict[str, Any],
         limit: int = 10
     ) -> List[Dict[str, Any]]:
-        """Search documents by metadata fields.
+        """Search documents by metadata filters.
         
         Args:
             metadata_filter: Dictionary of metadata fields to filter by
@@ -295,20 +296,20 @@ class ChromaStorage:
         try:
             results = self.collection.get(
                 where=metadata_filter,
-                limit=limit,
-                include=["documents", "metadatas"]
+                limit=limit
             )
             
-            documents = []
+            # Format results
+            formatted_results = []
             for i in range(len(results["ids"])):
-                doc = {
+                formatted_results.append({
                     "id": results["ids"][i],
                     "text": results["documents"][i],
                     "metadata": results["metadatas"][i]
-                }
-                documents.append(doc)
+                })
+                
+            return formatted_results
             
-            return documents
         except Exception as e:
             logger.error(f"Failed to search by metadata: {e}")
             return []
@@ -324,70 +325,124 @@ class ChromaStorage:
         """
         return self.search_by_metadata({"video_id": video_id})
 
-    def get_channel_chunks(self, channel_name: str) -> List[Dict[str, Any]]:
-        """Get all chunks from a specific channel.
+    def get_channel_chunks(
+        self,
+        channel_id: str,
+        start_date: Optional[str] = None,
+        end_date: Optional[str] = None,
+        limit: int = 10
+    ) -> List[Dict[str, Any]]:
+        """Get chunks from a specific channel within a date range.
         
         Args:
-            channel_name: The channel name to search for
+            channel_id: Channel ID to filter by
+            start_date: Optional start date (Unix timestamp)
+            end_date: Optional end date (Unix timestamp)
+            limit: Maximum number of results to return
             
         Returns:
-            List of chunks from the specified channel
+            List of matching chunks with their metadata
         """
-        return self.search_by_metadata({"channel_name": channel_name})
+        where = {"channel_id": channel_id}
+        
+        if start_date and end_date:
+            where["published_at"] = {"$gte": start_date, "$lte": end_date}
+        elif start_date:
+            where["published_at"] = {"$gte": start_date}
+        elif end_date:
+            where["published_at"] = {"$lte": end_date}
+            
+        return self.search_by_metadata(where, limit)
 
     def print_collection_summary(self):
         """Print a summary of the collection contents."""
-        stats = self.get_collection_stats()
-        print("\n=== Collection Summary ===")
-        print(json.dumps(stats, indent=2))
-        
-        # Get sample of documents
-        print("\n=== Sample Documents ===")
-        docs = self.list_all_documents(limit=5)
-        if docs:
+        try:
+            # Get collection stats
+            stats = self.get_collection_stats()
+            print("\n=== Collection Summary ===")
+            print(json.dumps(stats, indent=2))
+            
+            # Get sample documents
+            print("\n=== Sample Documents ===")
+            results = self.collection.get(limit=5)
+            
+            # Print sample documents in a table format
             table_data = []
-            for doc in docs:
+            for i in range(len(results["ids"])):
+                metadata = results["metadatas"][i]
+                # Convert Unix timestamp to readable date if available
+                published_at = metadata.get("published_at", "unknown")
+                if published_at != "unknown":
+                    try:
+                        published_at = datetime.fromtimestamp(int(published_at)).strftime('%Y-%m-%d %H:%M:%S')
+                    except (ValueError, TypeError):
+                        pass
+                        
                 table_data.append([
-                    doc["id"],
-                    doc["metadata"]["video_id"],
-                    doc["metadata"]["channel_name"],
-                    doc["metadata"]["upload_date"],
-                    len(doc["text"])
+                    results["ids"][i],
+                    metadata.get("video_id", "unknown"),
+                    metadata.get("channel_id", "unknown"),
+                    metadata.get("channel_name", "unknown"),
+                    published_at,
+                    metadata.get("video_title", "unknown"),
+                    len(results["documents"][i])
                 ])
             
-            print(tabulate(
-                table_data,
-                headers=["ID", "Video ID", "Channel", "Date", "Text Length"],
-                tablefmt="grid"
-            ))
-        else:
-            print("No documents found in collection.")
+            headers = ["ID", "Video ID", "Channel ID", "Channel Name", "Published At", "Title", "Text Length"]
+            print(tabulate(table_data, headers=headers, tablefmt="grid"))
+            
+        except Exception as e:
+            logger.error(f"Failed to print collection summary: {e}")
+            print(f"Error printing collection summary: {e}")
 
     def print_video_summary(self, video_id: str):
-        """Print a summary of chunks for a specific video.
-        
-        Args:
-            video_id: The video ID to summarize
-        """
-        chunks = self.get_video_chunks(video_id)
-        if not chunks:
-            print(f"No chunks found for video {video_id}")
-            return
+        """Print a summary of chunks for a specific video."""
+        try:
+            # Get all chunks for the video
+            results = self.collection.get(
+                where={"video_id": video_id}
+            )
             
-        print(f"\n=== Video Summary: {video_id} ===")
-        print(f"Total chunks: {len(chunks)}")
-        
-        # Get metadata from first chunk
-        metadata = chunks[0]["metadata"]
-        print(f"Title: {metadata.get('title', 'N/A')}")
-        print(f"Channel: {metadata.get('channel_name', 'N/A')}")
-        print(f"Upload Date: {metadata.get('upload_date', 'N/A')}")
-        
-        print("\n=== Chunks ===")
-        for i, chunk in enumerate(chunks, 1):
-            print(f"\nChunk {i}:")
-            print(f"ID: {chunk['id']}")
-            print(f"Text: {chunk['text'][:200]}...")  # Print first 200 chars
+            if not results["ids"]:
+                print(f"No chunks found for video ID: {video_id}")
+                return
+                
+            # Get metadata from first chunk (should be same for all chunks of same video)
+            metadata = results["metadatas"][0]
+            
+            # Convert Unix timestamp to readable date if available
+            published_at = metadata.get("published_at", "unknown")
+            if published_at != "unknown":
+                try:
+                    published_at = datetime.fromtimestamp(int(published_at)).strftime('%Y-%m-%d %H:%M:%S')
+                except (ValueError, TypeError):
+                    pass
+            
+            print(f"\n=== Video Summary for {video_id} ===")
+            print(f"Title: {metadata.get('video_title', 'unknown')}")
+            print(f"Channel: {metadata.get('channel_name', 'unknown')} (ID: {metadata.get('channel_id', 'unknown')})")
+            print(f"Published: {published_at}")
+            print(f"Total Chunks: {len(results['ids'])}")
+            
+            # Print chunks in a table
+            table_data = []
+            for i in range(len(results["ids"])):
+                table_data.append([
+                    results["ids"][i],
+                    results["metadatas"][i].get("chunk_index", -1),
+                    len(results["documents"][i])
+                ])
+            
+            print("\nChunks:")
+            print(tabulate(
+                table_data,
+                headers=["Chunk ID", "Index", "Text Length"],
+                tablefmt="grid"
+            ))
+            
+        except Exception as e:
+            logger.error(f"Failed to print video summary: {e}")
+            print(f"Error printing video summary: {e}")
 
     def clear_collection(self) -> bool:
         """Clear all data from the collection."""
@@ -408,7 +463,7 @@ def main():
     # Initialize storage
     storage = ChromaStorage(
         persist_directory="chroma_db",
-        collection_name="youtube_transcripts_v1"
+        collection_name="youtube_transcripts"
     )
     
     # Load data from the latest processed folder

@@ -1,0 +1,722 @@
+{
+  "total_channels_processed": 179,
+  "total_channels_with_videos": 178,
+  "total_videos_found": 267,
+  "total_transcripts_retrieved": 68,
+  "pipeline_execution_time": "40.09 seconds",
+  "inactive_channels_removed": 0,
+  "channels": {
+    "VTS - Brent Osachoff": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Dr. Stock": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "TraderNick": {
+      "videos_found": 3,
+      "transcripts_retrieved": 0
+    },
+    "Jim Dalton Trading": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Technical Analysis": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Zacks Investment Research": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Carnivore Trades": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "SpyGlass": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "RT Money": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Chris Dunn": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Stas Talks Stocks": {
+      "videos_found": 6,
+      "transcripts_retrieved": 0
+    },
+    "Joseph Hentges": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Creative Planning": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "High Altitude Investing": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Jeff Teeples": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "TheChartGuys": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "InstituteofTrading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "Dividend Diplomats": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "CNBC Television": {
+      "videos_found": 15,
+      "transcripts_retrieved": 2
+    },
+    "Wicked Stocks": {
+      "videos_found": 3,
+      "transcripts_retrieved": 1
+    },
+    "Daily Stock Picks": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "Principles by Ray Dalio": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "Ross Cameron - Warrior Trading": {
+      "videos_found": 3,
+      "transcripts_retrieved": 1
+    },
+    "Taylor Horton": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Blue Line Futures LLC": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Option Drops": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "Chris Pulver Trading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Cory Mitchell Trading": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Charlie Money": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Get Me Trading": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Simply Wall St": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Trading180": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "TechConversations": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Elliott Wave Options": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "MenthorQ": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "Trading Simplified": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "Eliot Traders Club": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Felix & Friends (Goat Academy)": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "The Wall Street Journal": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "The Trading Pit": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Kitco NEWS": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "SpicyTrade Stock Technical Analysis": {
+      "videos_found": 11,
+      "transcripts_retrieved": 4
+    },
+    "Steve Miller": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "Daily Trading Analysis": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "FREENVESTING": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "The WallStreet School": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Ricky Gutierrez": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Finding Value Finance": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "Invest With Jacob": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "breakpointtrades": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Optionstender": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Mr.NoBody": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Benzinga": {
+      "videos_found": 7,
+      "transcripts_retrieved": 2
+    },
+    "Supernova Trades": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "COTBASE": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "The S&P Roadmap": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Seeking Alpha": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Figuring Out Money": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "RiskReversal Media": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "The Portfolio Bulletin": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Junior Trader": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Opinicus 🦅": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "TRADEWITHPROFILE": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Dividend Bull": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Jay el": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Day Trader S&P 500": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Trades With Jess": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Ron Walker": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "FlamingosAdvisoryTube": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Iliya Sivkov - Trading Fanatic": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Arete Trading": {
+      "videos_found": 3,
+      "transcripts_retrieved": 1
+    },
+    "HDFC securities": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Slothfather Trading": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Geeks of Finance": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "StockXcapital": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Doctor of Pump & Dump": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Adam Khoo": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Fat Cat": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "ABSOLUTE TRADE": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "kenneth suna": {
+      "videos_found": 3,
+      "transcripts_retrieved": 3
+    },
+    "Let's Talk Money! with Joseph Hogue, CFA": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "CiovaccoCapital": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "NASDAQ_NINJA": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "Marko - WhiteBoard Finance": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "PhillipCapital": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "0DTE Traders": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Stock Moe": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "TradersPost": {
+      "videos_found": 5,
+      "transcripts_retrieved": 2
+    },
+    "Charles Schwab": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "Henry James": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Option Pit": {
+      "videos_found": 4,
+      "transcripts_retrieved": 1
+    },
+    "City Index": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Yahoo Finance": {
+      "videos_found": 15,
+      "transcripts_retrieved": 3
+    },
+    "GrayTrades": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Value Investing with Sven Carlin, Ph.D.": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Extrinsic Trades": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Cheddar Flow": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "JD-ES": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Trade Risk": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Bravos Research": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Schwab Network": {
+      "videos_found": 15,
+      "transcripts_retrieved": 6
+    },
+    "Plus3 Forecasting": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Wall Street Oasis": {
+      "videos_found": 4,
+      "transcripts_retrieved": 1
+    },
+    "Trade Brigade": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "The Pulse Of The Market (smtraderCA)": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "MyStrategicForecast": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "BLACK BELT TRADER": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Lee Lowell - The Smart Option Seller": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "DionTrades": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Smashing Goals": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Dividend Guy": {
+      "videos_found": 2,
+      "transcripts_retrieved": 2
+    },
+    "Brian Shannon": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Traders Helping Traders": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Market | Chart | Pattern": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "Dynamic Trend": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Minutes of Money": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "ShadowTrader": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Irontrader.Wallstreet": {
+      "videos_found": 3,
+      "transcripts_retrieved": 1
+    },
+    "StockCharts TV": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "All Star Equity Investments": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Money Making Market": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "Bulls On Wall Street": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Meet Kevin": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "SPYder QQQueen Trading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Aaron Rentfrew - Mind Unbound Trading": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "FOREX.com": {
+      "videos_found": 4,
+      "transcripts_retrieved": 0
+    },
+    "GammaEdge": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "The Finance Hydra": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Wealth Builders HQ": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "The Price Action Trader": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "SPY Day Trading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "TheoTrade, LLC": {
+      "videos_found": 2,
+      "transcripts_retrieved": 1
+    },
+    "Investor's Business Daily": {
+      "videos_found": 3,
+      "transcripts_retrieved": 1
+    },
+    "Ticker Symbol: YOU": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "PL Capital LLC": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "TheStreet": {
+      "videos_found": 6,
+      "transcripts_retrieved": 1
+    },
+    "Fox Business": {
+      "videos_found": 15,
+      "transcripts_retrieved": 2
+    },
+    "Ironbeam Futures": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Vantagepoint ai": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Rey Jay's Trades": {
+      "videos_found": 4,
+      "transcripts_retrieved": 2
+    },
+    "Financial Times": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Maverick Trading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "NoticeTrades": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Beginner Trading": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "Ryan Scribner": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Bloomberg Television": {
+      "videos_found": 15,
+      "transcripts_retrieved": 0
+    },
+    "Right Side Trader": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "The Options Insider": {
+      "videos_found": 6,
+      "transcripts_retrieved": 3
+    },
+    "Mike Jones Investing": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Macro Voices": {
+      "videos_found": 2,
+      "transcripts_retrieved": 0
+    },
+    "Simpler Trading": {
+      "videos_found": 4,
+      "transcripts_retrieved": 2
+    },
+    "Lion Of Wall Street": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "QuarterMiLi Trading": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "The Trading Channel (The Trading Channel)": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "GetKnowTrading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Larry Berman Official": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "iC4XCLEARLY": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Convergent Trading": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Market Scholars": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Rey-Jay Invests": {
+      "videos_found": 4,
+      "transcripts_retrieved": 3
+    },
+    "Rizzo Trades": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Everything Money": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "Gareth Soloway": {
+      "videos_found": 3,
+      "transcripts_retrieved": 2
+    },
+    "Top One Trader": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Mott Capital's Market Chronicles": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Prosharemarket": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Financial Mood": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Trading Litt": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Market Wizard - Stock Options & Futures": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "CommSecTV": {
+      "videos_found": 1,
+      "transcripts_retrieved": 0
+    },
+    "EarningsBeats": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Trading Alchemist": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "FinFluential Television": {
+      "videos_found": 1,
+      "transcripts_retrieved": 1
+    },
+    "The Stock Market Show": {
+      "videos_found": 2,
+      "transcripts_retrieved": 2
+    },
+    "Topstep": {
+      "videos_found": 8,
+      "transcripts_retrieved": 1
+    },
+    "Ale's World of Stocks": {
+      "videos_found": 0,
+      "transcripts_retrieved": 0
+    },
+    "Live Trading by TraderTV Live": {
+      "videos_found": 6,
+      "transcripts_retrieved": 0
+    },
+    "VectorVest": {
+      "videos_found": 7,
+      "transcripts_retrieved": 1
+    }
+  }
+}

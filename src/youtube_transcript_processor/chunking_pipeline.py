@@ -4,22 +4,29 @@ import os
 import json
 import logging
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
-from openai import AzureOpenAI
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from dotenv import load_dotenv
+from openai import AzureOpenAI
 from sentence_transformers import SentenceTransformer
+from tqdm import tqdm
 
 # Configure logging with more detailed format
 logging.basicConfig(
-    level=logging.DEBUG,  # Set to DEBUG to see all logs
-    format='%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+    level=logging.INFO,  # Changed to INFO to reduce noise
+    format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('chunking_pipeline.log'),
+        logging.FileHandler('chunking_pipeline.log', encoding='utf-8'),
         logging.StreamHandler(sys.stdout)
     ]
 )
 logger = logging.getLogger(__name__)
+
+# Add tqdm to your requirements.txt: pip install tqdm
+MAX_WORKERS = 10  # To avoid overwhelming the API endpoint. Adjust as needed.
 
 # Log Python version and environment
 logger.info("Python version: %s", sys.version)
@@ -39,9 +46,6 @@ try:
         azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
     )
     logger.info("Azure OpenAI client initialized successfully")
-    logger.debug("Azure OpenAI configuration: endpoint=%s, version=%s", 
-                os.getenv("AZURE_OPENAI_ENDPOINT"),
-                os.getenv("AZURE_OPENAI_API_VERSION"))
 except Exception as e:
     logger.error("Failed to initialize Azure OpenAI client: %s", str(e), exc_info=True)
     raise
@@ -51,7 +55,6 @@ logger.info("Initializing sentence transformer model")
 try:
     embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
     logger.info("Sentence transformer model initialized successfully")
-    logger.debug("Model name: all-MiniLM-L6-v2")
 except Exception as e:
     logger.error("Failed to initialize sentence transformer model: %s", str(e), exc_info=True)
     raise
@@ -60,11 +63,9 @@ def get_latest_date_folder(base_path):
     """Get the most recent date folder in the youtube outputs directory."""
     logger.info("Searching for latest date folder in: %s", base_path)
     youtube_path = Path(base_path) / "outputs" / "youtube"
-    logger.debug("YouTube path: %s", youtube_path)
     
     try:
         date_folders = [d for d in youtube_path.iterdir() if d.is_dir()]
-        logger.debug("Found date folders: %s", [str(d) for d in date_folders])
         
         if not date_folders:
             logger.error("No date folders found in %s", youtube_path)
@@ -79,7 +80,7 @@ def get_latest_date_folder(base_path):
 
 def semantic_chunk_transcript(transcript_text):
     """Use Azure OpenAI to create semantic chunks from transcript."""
-    print("\n=== Azure OpenAI Request ===")
+    logger.info("Making request to Azure OpenAI for semantic chunking")
     prompt = f"""Please analyze this trading transcript and break it into semantic chunks. 
     Each chunk should be self-contained and focus on a specific aspect of the technical analysis.
     
@@ -99,7 +100,6 @@ def semantic_chunk_transcript(transcript_text):
     ["chunk1", "chunk2", ...]"""
 
     try:
-        # Prepare request
         request_data = {
             "model": os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"),
             "messages": [
@@ -107,22 +107,14 @@ def semantic_chunk_transcript(transcript_text):
                 {"role": "user", "content": prompt}
             ],
             "temperature": 0.3,
-            "max_tokens": 4000  # Increased to handle longer chunks
+            "max_tokens": 4000
         }
         
-        # Print request details
-        print("\nRequest Details:")
-        print(f"Model: {request_data['model']}")
-        print(f"Temperature: {request_data['temperature']}")
-        print(f"Max Tokens: {request_data['max_tokens']}")
-        
-        # Make request
-        print("\n=== Azure OpenAI Response ===")
         response = client.chat.completions.create(**request_data)
-        
-        # Get content and clean it
         content = response.choices[0].message.content.strip()
-        print(f"\nResponse length: {len(content)} characters")
+        
+        prompt_tokens = response.usage.prompt_tokens
+        completion_tokens = response.usage.completion_tokens
         
         # Clean the content by removing markdown code block markers
         if content.startswith("```json"):
@@ -131,27 +123,22 @@ def semantic_chunk_transcript(transcript_text):
             content = content[:-3]
         content = content.strip()
         
-        # Try to parse JSON
         try:
             chunks = json.loads(content)
             if not isinstance(chunks, list):
-                print(f"\nError: Response is not a list")
-                return []
+                logger.error("Response is not a list, but %s", type(chunks))
+                return [], 0, 0
             
-            print(f"\nSuccessfully parsed {len(chunks)} chunks")
-            for i, chunk in enumerate(chunks):
-                print(f"Chunk {i} length: {len(chunk)} characters")
-                print(f"Preview: {chunk[:200]}...")
-            return chunks
+            logger.info("Successfully parsed %d chunks", len(chunks))
+            return chunks, prompt_tokens, completion_tokens
             
         except json.JSONDecodeError as e:
-            print(f"\nJSON Parse Error: {str(e)}")
-            print(f"First 100 chars of content: {content[:100]}...")
-            return []
+            logger.error("JSON Parse Error: %s. Content starts with: %s...", str(e), content[:100])
+            return [], 0, 0
             
     except Exception as e:
-        print(f"\nError in semantic chunking: {str(e)}")
-        return []
+        logger.error("Error in semantic chunking: %s", str(e), exc_info=True)
+        return [], 0, 0
 
 def create_embeddings(chunks):
     """Create embeddings for the chunks using sentence-transformers."""
@@ -165,42 +152,43 @@ def create_embeddings(chunks):
         return []
 
 def process_transcript(transcript_path, processed_dir):
-    """Process a single transcript file."""
-    print(f"\nProcessing: {transcript_path.name}")
+    """Process a single transcript file: chunk, embed, and save."""
+    logger.info("Processing: %s", transcript_path.name)
     
-    # Read transcript
     try:
         with open(transcript_path, 'r', encoding='utf-8') as f:
             transcript_data = json.load(f)
-        print("✓ Successfully read transcript file")
+        logger.info("[OK] Read transcript file %s", transcript_path.name)
     except Exception as e:
-        print(f"✗ Error reading transcript file: {str(e)}")
-        return
+        logger.error("[ERROR] Failed to read transcript file %s: %s", transcript_path.name, str(e))
+        return None
     
-    # Extract transcript text and metadata
+    # Extract transcript text and metadata - note the structure change
     transcript_text = transcript_data['transcript']
-    metadata = transcript_data['meta_data']
-    video_id = metadata['video_id']
+    video_id = transcript_data['video_id']
+    title = transcript_data['title']
+    channel_name = transcript_data['channel_name']
+    published = transcript_data['published']
     
-    print(f"Video: {metadata['title']} ({video_id})")
-    print(f"Channel: {metadata['channel_name']}")
-    print(f"Upload Date: {metadata['upload_date']}")
-    print(f"Transcript length: {len(transcript_text)} characters")
+    logger.info("Video: %s (%s)", title, video_id)
+    logger.info("Channel: %s", channel_name)
+    logger.info("Published: %s", published)
+    logger.info("Transcript length: %d characters", len(transcript_text))
     
     # Create semantic chunks
-    chunks = semantic_chunk_transcript(transcript_text)
+    chunks, prompt_tokens, completion_tokens = semantic_chunk_transcript(transcript_text)
     
     if not chunks:
-        print("✗ Failed to create chunks")
-        return
+        logger.warning("[SKIP] Failed to create chunks for %s", video_id)
+        return {"video_id": video_id, "status": "chunking_failed"}
     
     # Create embeddings
-    print("\nCreating embeddings...")
+    logger.info("Creating embeddings for %d chunks...", len(chunks))
     embeddings = create_embeddings(chunks)
     
     if not embeddings:
-        print("✗ Failed to create embeddings")
-        return
+        logger.warning("[SKIP] Failed to create embeddings for %s", video_id)
+        return {"video_id": video_id, "status": "embedding_failed"}
     
     # Prepare all chunks data
     chunks_data = []
@@ -217,15 +205,11 @@ def process_transcript(transcript_path, processed_dir):
     output_data = {
         "chunks": chunks_data,
         "meta_data": {
-            "video_id": metadata['video_id'],
-            "title": metadata['title'],
-            "upload_date": metadata['upload_date'],
-            "upload_time": metadata['upload_time'],
-            "channel_name": metadata['channel_name'],
-            "subscribers": metadata['subscribers'],
-            "views": metadata['views'],
-            "likes": metadata['likes'],
-            "comments": metadata['comments'],
+            "video_id": video_id,
+            "title": title,
+            "published": published,
+            "channel_name": channel_name,
+            "channel_id": transcript_data.get('channel_id', ''),
             "total_chunks": len(chunks),
             "original_transcript_length": len(transcript_text)
         }
@@ -236,62 +220,99 @@ def process_transcript(transcript_path, processed_dir):
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(output_data, f, indent=2)
-        print(f"✓ Saved {len(chunks)} chunks to {output_file}")
+        logger.info("[OK] Saved %d chunks to %s", len(chunks), output_file)
     except Exception as e:
-        print(f"✗ Error saving chunks: {str(e)}")
+        logger.error("[ERROR] Failed to save chunks for %s: %s", video_id, str(e))
+        return {"video_id": video_id, "status": "save_failed"}
+
+    return {
+        "video_id": video_id,
+        "status": "success",
+        "prompt_tokens": prompt_tokens,
+        "completion_tokens": completion_tokens,
+        "total_tokens": prompt_tokens + completion_tokens,
+        "chunks_created": len(chunks)
+    }
 
 def main():
     """Main entry point for the chunking pipeline."""
-    print("\n=== Starting Chunking Pipeline ===")
-    print(f"Python version: {sys.version}")
-    print(f"Current working directory: {os.getcwd()}")
+    logger.info("=== Starting Chunking Pipeline ===")
+    start_time = time.time()
     
     try:
-        # Load environment variables
-        print("\n=== Environment Variables ===")
-        load_dotenv()
-        print(f"AZURE_OPENAI_ENDPOINT: {os.getenv('AZURE_OPENAI_ENDPOINT')}")
-        print(f"AZURE_OPENAI_API_VERSION: {os.getenv('AZURE_OPENAI_API_VERSION')}")
-        print(f"AZURE_OPENAI_DEPLOYMENT_NAME: {os.getenv('AZURE_OPENAI_DEPLOYMENT_NAME')}")
-        
-        # Initialize Azure OpenAI client
-        print("\n=== Initializing Azure OpenAI Client ===")
-        client = AzureOpenAI(
-            api_key=os.getenv("AZURE_OPENAI_API_KEY"),
-            api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
-            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
-        )
-        print("✓ Azure OpenAI client initialized")
-        
-        # Initialize sentence transformer
-        print("\n=== Initializing Sentence Transformer ===")
-        embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-        print("✓ Sentence transformer model initialized")
-        
         # Get latest date folder
-        print("\n=== Finding Latest Date Folder ===")
         base_path = Path.cwd()
         latest_date_folder = get_latest_date_folder(base_path)
-        print(f"Processing transcripts from: {latest_date_folder}")
+        logger.info("Processing transcripts from: %s", latest_date_folder)
         
         # Create processed directory
         processed_dir = latest_date_folder / "processed"
         processed_dir.mkdir(exist_ok=True)
-        print(f"Created processed directory: {processed_dir}")
+        logger.info("Created processed directory: %s", processed_dir)
         
         # Process all transcripts
         transcripts_dir = latest_date_folder / "transcripts"
         transcript_files = list(transcripts_dir.glob("*.json"))
-        print(f"\nFound {len(transcript_files)} transcript files to process")
+        logger.info("Found %d transcript files to process", len(transcript_files))
         
-        for transcript_file in transcript_files:
-            process_transcript(transcript_file, processed_dir)
+        if not transcript_files:
+            logger.info("No transcripts to process. Exiting.")
+            return
+
+        all_stats = []
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+            futures = {executor.submit(process_transcript, f, processed_dir): f for f in transcript_files}
+            
+            # Use tqdm for a progress bar
+            with tqdm(total=len(transcript_files), desc="Processing Transcripts", unit="file") as pbar:
+                for future in as_completed(futures):
+                    result = future.result()
+                    if result:
+                        all_stats.append(result)
+                    pbar.update(1)
+
+        logger.info("=== Pipeline Execution Summary ===")
         
-        print("\n=== Finished Processing All Transcripts ===")
+        successful_procs = [s for s in all_stats if s.get('status') == 'success']
+        failed_procs = [s for s in all_stats if s.get('status') != 'success']
+        
+        total_api_calls = len(successful_procs)
+        total_prompt_tokens = sum(s.get('prompt_tokens', 0) for s in successful_procs)
+        total_completion_tokens = sum(s.get('completion_tokens', 0) for s in successful_procs)
+        total_tokens = total_prompt_tokens + total_completion_tokens
+        
+        end_time = time.time()
+        pipeline_execution_time = round(end_time - start_time, 2)
+        
+        final_stats = {
+            "pipeline_execution_time_seconds": pipeline_execution_time,
+            "total_transcripts_found": len(transcript_files),
+            "total_transcripts_processed_successfully": len(successful_procs),
+            "total_transcripts_failed": len(failed_procs),
+            "api_calls_made": total_api_calls,
+            "total_prompt_tokens": total_prompt_tokens,
+            "total_completion_tokens": total_completion_tokens,
+            "total_tokens_processed": total_tokens,
+            "individual_transcript_stats": all_stats
+        }
+        
+        stats_dir = latest_date_folder / "stats"
+        stats_dir.mkdir(exist_ok=True)
+        stats_file = stats_dir / "stats_chunking.json"
+        
+        try:
+            with open(stats_file, 'w', encoding='utf-8') as f:
+                json.dump(final_stats, f, indent=4)
+            logger.info("Pipeline stats saved to %s", stats_file)
+        except Exception as e:
+            logger.error("Failed to save stats file: %s", str(e), exc_info=True)
+
+        logger.info("=== Finished Processing All Transcripts ===")
+        logger.info("Execution time: %.2f seconds", pipeline_execution_time)
+        logger.info("Successfully processed %d/%d transcripts", len(successful_procs), len(transcript_files))
         
     except Exception as e:
-        print(f"\n=== Pipeline Failed ===")
-        print(f"Error: {str(e)}")
+        logger.critical("=== Pipeline Failed ===", exc_info=True)
         raise
 
 if __name__ == "__main__":

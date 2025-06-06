@@ -6,4 +6,7 @@ numpy==1.24.3
 huggingface-hub==0.16.4
 transformers==4.30.2
 pathlib>=1.0.1
-tabulate>=0.9.0  # For pretty printing tables 
+tabulate>=0.9.0  # For pretty printing tables
+requests==2.31.0
+beautifulsoup4==4.12.2
+PyYAML==6.0.1 
