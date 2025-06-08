@@ -34,7 +34,9 @@ class YouTubeTranscriptFetcher:
         self.stats = {
             'total_videos_found': 0,
             'channel_videos': defaultdict(int),
-            'channel_transcripts': defaultdict(int)
+            'channel_transcripts': defaultdict(int),
+            'total_transcript_hours': 0.0,
+            'channel_transcript_hours': defaultdict(float)
         }
         
     def _setup_dirs(self):
@@ -119,13 +121,18 @@ class YouTubeTranscriptFetcher:
             # Join transcript segments into a single string
             transcript_text = ' '.join([segment['text'] for segment in transcript_segments])
             
+            # Calculate total duration in hours
+            total_duration = sum(segment['duration'] for segment in transcript_segments)
+            duration_hours = total_duration / 3600  # Convert seconds to hours
+            
             transcript_data = {
                 'channel_id': video['channel_id'],
                 'channel_name': video['channel_name'],
                 'video_id': video['video_id'],
                 'published': video['published'],
                 'title': video['title'],
-                'transcript': transcript_text  # Now a single string
+                'transcript': transcript_text,  # Now a single string
+                'duration_hours': duration_hours
             }
             
             # Save individual transcript
@@ -135,6 +142,8 @@ class YouTubeTranscriptFetcher:
             
             # Update stats
             self.stats['channel_transcripts'][video['channel_name']] += 1
+            self.stats['total_transcript_hours'] += duration_hours
+            self.stats['channel_transcript_hours'][video['channel_name']] += duration_hours
             
             logger.info(f"Successfully processed video: {video['title']} from {video['channel_name']}")
             return transcript_data
@@ -169,6 +178,7 @@ class YouTubeTranscriptFetcher:
             "total_channels_with_videos": len(self.stats['channel_videos']),
             "total_videos_found": self.stats['total_videos_found'],
             "total_transcripts_retrieved": sum(self.stats['channel_transcripts'].values()),
+            "total_transcript_hours": round(self.stats['total_transcript_hours'], 2),
             "pipeline_execution_time": f"{time.time() - self.start_time:.2f} seconds",
             "inactive_channels_removed": len(self.inactive_channels),
             "channels": {}
@@ -178,7 +188,8 @@ class YouTubeTranscriptFetcher:
         for channel_name in set(self.stats['channel_videos'].keys()) | set(self.stats['channel_transcripts'].keys()):
             stats['channels'][channel_name] = {
                 'videos_found': self.stats['channel_videos'].get(channel_name, 0),
-                'transcripts_retrieved': self.stats['channel_transcripts'].get(channel_name, 0)
+                'transcripts_retrieved': self.stats['channel_transcripts'].get(channel_name, 0),
+                'transcript_hours': round(self.stats['channel_transcript_hours'].get(channel_name, 0), 2)
             }
         
         return stats
@@ -229,12 +240,13 @@ class YouTubeTranscriptFetcher:
         report.append(f"Channels with recent videos: {statistics['total_channels_with_videos']}")
         report.append(f"Total recent videos found: {statistics['total_videos_found']}")
         report.append(f"Total transcripts retrieved: {statistics['total_transcripts_retrieved']}")
+        report.append(f"Total transcript hours: {statistics['total_transcript_hours']}")
         report.append(f"Pipeline execution time: {statistics['pipeline_execution_time']}")
         report.append(f"Inactive channels removed: {statistics['inactive_channels_removed']}")
         report.append("\n--- Per-Channel Breakdown ---")
         
         for channel_name, stats in statistics['channels'].items():
-            report.append(f"  - {channel_name}: {stats['transcripts_retrieved']} transcripts (from {stats['videos_found']} videos)")
+            report.append(f"  - {channel_name}: {stats['transcripts_retrieved']} transcripts ({stats['transcript_hours']} hours) from {stats['videos_found']} videos")
             
         report.append("="*50 + "\n")
         logger.info("\n".join(report))

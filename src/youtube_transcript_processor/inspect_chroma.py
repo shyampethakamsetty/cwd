@@ -62,8 +62,10 @@ def clear_chroma_data():
     )
     
     # Clear all documents from the collection
-    storage.clear_collection()
-    print("All documents have been cleared from the collection.")
+    if storage.clear_collection():
+        print("All documents have been cleared from the collection.")
+    else:
+        print("Failed to clear the collection. Check the logs for details.")
 
 def main():
     parser = argparse.ArgumentParser(description='ChromaDB data inspection and management tool')

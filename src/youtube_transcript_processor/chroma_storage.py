@@ -135,9 +135,9 @@ class ChromaStorage:
                 metadata = {
                     "channel_id": file_metadata.get("channel_id", "unknown"),
                     "video_id": file_metadata.get("video_id", "unknown"),
-                    "published_at": file_metadata.get("published_at", "unknown"),
+                    "published_at": file_metadata.get("published", file_metadata.get("upload_date", "unknown")),
                     "channel_name": file_metadata.get("channel_name", "unknown"),
-                    "video_title": file_metadata.get("title", "unknown"),
+                    "video_title": file_metadata.get("video_title", file_metadata.get("title", "unknown")),
                     "chunk_index": item.get("chunk_index", -1)
                 }
                 
@@ -374,7 +374,13 @@ class ChromaStorage:
                 published_at = metadata.get("published_at", "unknown")
                 if published_at != "unknown":
                     try:
-                        published_at = datetime.fromtimestamp(int(published_at)).strftime('%Y-%m-%d %H:%M:%S')
+                        # Try parsing ISO format first
+                        try:
+                            published_at = datetime.fromisoformat(published_at.replace('Z', '+00:00'))
+                        except ValueError:
+                            # If that fails, try parsing as Unix timestamp
+                            published_at = datetime.fromtimestamp(int(published_at))
+                        published_at = published_at.strftime('%Y-%m-%d %H:%M:%S')
                     except (ValueError, TypeError):
                         pass
                         
@@ -414,7 +420,13 @@ class ChromaStorage:
             published_at = metadata.get("published_at", "unknown")
             if published_at != "unknown":
                 try:
-                    published_at = datetime.fromtimestamp(int(published_at)).strftime('%Y-%m-%d %H:%M:%S')
+                    # Try parsing ISO format first
+                    try:
+                        published_at = datetime.fromisoformat(published_at.replace('Z', '+00:00'))
+                    except ValueError:
+                        # If that fails, try parsing as Unix timestamp
+                        published_at = datetime.fromtimestamp(int(published_at))
+                    published_at = published_at.strftime('%Y-%m-%d %H:%M:%S')
                 except (ValueError, TypeError):
                     pass
             
@@ -450,8 +462,11 @@ class ChromaStorage:
             # Get all document IDs
             all_ids = self.collection.get(include=[])["ids"]
             if all_ids:
-                # Delete all documents by their IDs
-                self.collection.delete(ids=all_ids)
+                # Delete documents in batches of 166 (ChromaDB's limit)
+                batch_size = 166
+                for i in range(0, len(all_ids), batch_size):
+                    batch_ids = all_ids[i:i + batch_size]
+                    self.collection.delete(ids=batch_ids)
             logger.info(f"Cleared collection '{self.collection_name}'")
             return True
         except Exception as e:
@@ -504,7 +519,7 @@ def main():
             limit=3
         )
         for chunk in channel_chunks:
-            print(f"\nVideo: {chunk['metadata']['title']}")
+            print(f"\nVideo: {chunk['metadata']['video_title']}")
             print(f"Channel: {chunk['metadata']['channel_name']}")
             print(f"Text: {chunk['text'][:200]}...")
 
